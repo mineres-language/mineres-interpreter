@@ -121,11 +121,14 @@ São os símbolos que estruturam o código. Abrem e fecham blocos, separam argum
 | Lexema   | Código | Função                  | Equivalente em C |
 |----------|--------|-------------------------|------------------|
 | `simbora`| 500    | Abre bloco              | `{`              |
-| `cabô`   | 501    | Fecha bloco             | `}`              |
+| `cabo`   | 501    | Fecha bloco             | `}`              |
 | `uai`    | 502    | Fim de instrução        | `;`              |
 | `(`      | 503    | Abre parêntese          | `(`              |
 | `)`      | 504    | Fecha parêntese         | `)`              |
 | `,`      | 505    | Separador de argumentos | `,`              |
+| `{`      | 506    | Abre chave (símbolo)    | `{`              |
+| `}`      | 507    | Fecha chave (símbolo)   | `}`              |
+| `.`      | 508    | Ponto Final             | `.`              |
 
 ### Erros Léxicos (códigos 900–999)
 
@@ -185,40 +188,36 @@ O lexer usa expressões regulares para reconhecer cada categoria de token. Elas 
 mineres-lexer/
 ├── README.md               ← este arquivo
 ├── src/
-│   ├── main.uai            ← entrada principal, orquestra a execução
-│   ├── lexer.uai           ← lógica do analisador léxico
-│   └── tokens.uai          ← definição dos códigos de cada token
-├── tests/
-│   ├── entrada.uai         ← arquivo de teste com código Minerês
-│   └── saida_esperada.txt  ← saída esperada para validação
+│   ├── main.py            ← script principal, orquestra a execução e formata a saída
+│   ├── lexer.py           ← lógica do analisador léxico (AFD)
+│   └── tokens.py          ← dicionário e definição dos códigos de cada token
+├── input/
+│   └── entrada.uai         ← arquivo contendo o código-fonte Minerês para teste
 └── output/
-    └── (arquivos .c gerados pela extensão ficam aqui)
+    └── saida.uai            ← arquivo gerado contendo o vetor de tokens
 ```
 
 ### Descrição dos arquivos
 
-**`tokens.uai`**: define todas as constantes numéricas que identificam cada tipo de token. É a base usada pelos outros arquivos.
+**`tokens.py`**: define todas as constantes numéricas e o dicionário de palavras-chave. É a base usada pelos outros arquivos.
 
-**`lexer.uai`**: contém as funções que leem o código-fonte caractere por caractere, reconhecem os padrões e produzem a lista de tokens.
+**`lexer.py`**: contém a classe que lê o código-fonte caractere por caractere, reconhece os padrões usando lógica de Autômatos Finitos Determinísticos e produz a lista de tokens.
 
-**`main.uai`**: ponto de entrada do programa. Abre o arquivo de código-fonte, chama o lexer e imprime a tabela de tokens resultante.
+**`main.py`**: ponto de entrada do programa. Abre o arquivo de entrada, instância o lexer, formata os tokens em um vetor estilizado e salva na pasta de saída.
 
 ---
 
 ## Como executar
 
-> O código é escrito em Minerês (`.uai`). A extensão [Minerês para VS Code](https://marketplace.visualstudio.com/items?itemName=grupo-mineres.mineres) transpila os arquivos `.uai` para C, que então é compilado normalmente.
+> O analisador léxico foi desenvolvido inteiramente em Python. Para testá-lo em sua máquina, siga os passos abaixo:
 
-1. Abra o projeto no VS Code com a extensão Minerês instalada
-2. A extensão transpila os arquivos `.uai` para `.c` na pasta `output/`
-3. Compile o `.c` gerado:
+1. Clone o repositório e abra a pasta do projeto `(mineres-lexer)` no terminal.
+2. Escreva o seu código Minerês no arquivo `input/entrada.uai`.
+3. Execute o programa principal:
    ```bash
-   gcc output/main.c -o lexer
+   python src/main.py
    ```
-4. Execute passando um arquivo Minerês como entrada:
-   ```bash
-   ./lexer tests/entrada.uai
-   ```
+4. O resultado será impresso no terminal e salvo de forma formatada no arquivo `output/saida.uai`.
 
 ---
 

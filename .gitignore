@@ -1,2 +1,3 @@
 saida.c
 *.exe
+__pycache__/
