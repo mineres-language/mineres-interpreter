@@ -86,36 +86,43 @@ DEL_PONTO           = 508
 # =============================================================================
 
 PALAVRAS_RESERVADAS = {
+    # Estruturas de Controle
+    "uai_se":             PR_UAI_SE,
+    "uai_senao":          PR_UAI_SENAO,
+    "roda_esse_trem":     PR_RODA_ESSE_TREM,
+    "enquanto_tiver_trem":PR_ENQUANTO,
+    "dependenu":          PR_DEPENDENU,
+    "du_casu":            PR_DU_CASU,
+    # Fluxo e Funções
+    "ta_bao":             PR_TA_BAO,
+    "para_o_trem":        PR_PARA_O_TREM,
+    "toca_o_trem":        PR_TOCA_O_TREM,
+    "bora_cumpade":       PR_BORA_CUMPADE,
+    # Variáveis e Dados
     "trem_di_numeru":     PR_TREM_DI_NUMERU,
     "trem_cum_virgula":   PR_TREM_CUM_VIRGULA,
     "trem_discrita":      PR_TREM_DISCRITA,
     "trem_discolhe":      PR_TREM_DISCOLHE,
     "trosso":             PR_TROSSO,
-    "uai_se":             PR_UAI_SE,
-    "uai_senao":          PR_UAI_SENAO,
-    "dependenu":          PR_DEPENDENU,
-    "du_casu":            PR_DU_CASU,
-    "roda_esse_trem":     PR_RODA_ESSE_TREM,
-    "enquanto_tiver_trem":PR_ENQUANTO,
-    "para_o_trem":        PR_PARA_O_TREM,
-    "toca_o_trem":        PR_TOCA_O_TREM,
-    "bora_cumpade":       PR_BORA_CUMPADE,
-    "ta_bao":             PR_TA_BAO,
-    "oia_proce_ve":       PR_OIA_PROCE_VE,
-    "xove":               PR_XOVE,
-    # Operadores textuais
-    "fica_assim_entao":   OP_FICA_ASSIM_ENTAO,
-    "mema_coisa":         OP_MEMA_COISA,
-    "neh_nada":           OP_NEH_NADA,
-    "veiz":               OP_VEIZ,
-    "sob":                OP_SOB,
-    "tamem":              OP_TAMEM,
-    "quarque_um":         OP_QUARQUE_UM,
-    "vam_marca":          OP_VAM_MARCA,
-    "um_o_oto":           OP_UM_O_OTO,
-    # Delimitadores textuais
-    "simbora":            DEL_SIMBORA,
-    "uai":                DEL_UAI,
     "eh":                 PR_EH,
     "num_eh":             PR_NUM_EH,
+    # Escopo e Sintaxe
+    "simbora":            DEL_SIMBORA,
+    "cabo":               DEL_CABO,
+    "uai":                DEL_UAI,
+    # Operadores Relacionais
+    "fica_assim_entao":   OP_FICA_ASSIM_ENTAO,
+    "neh_nada":           OP_NEH_NADA,
+    "mema_coisa":         OP_MEMA_COISA,
+    # Operadores Lógicos
+    "quarque_um":         OP_QUARQUE_UM,
+    "vam_marca":          OP_VAM_MARCA,
+    "tamem":              OP_TAMEM,
+    "um_o_oto":           OP_UM_O_OTO,
+    # Operadores Aritméticos
+    "veiz":               OP_VEIZ,
+    "sob":                OP_SOB,
+    # Entrada e Saída
+    "xove":               PR_XOVE,
+    "oia_proce_ve":       PR_OIA_PROCE_VE,    
 }
