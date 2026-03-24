@@ -54,7 +54,7 @@ class Lexer:
         return c.isdigit()
 
     def eh_digito_hex(self, c: str) -> bool:
-        return c in '0123456789ABCDEF'
+        return c in '0123456789ABCDEFabcdef'
 
     def eh_digito_oct(self, c: str) -> bool:
         return c in '01234567'
@@ -191,16 +191,18 @@ class Lexer:
         return (self.fonte[inicio:self.pos], ERRO_STRING, lin, col)
 
     def le_char(self):
-        """Lê literal char no formato .'X'."""
+        """Lê literal char delimitado por aspas simples ('X')."""
         inicio = self.pos
         lin    = self.linha
         col    = self.coluna
 
-        self.avanca()  # .
-        self.avanca()  # o caractere
+        self.avanca()  # consome a aspa simples de abertura '
+        if self.pos < self.tamanho:
+            self.avanca()
 
-        if self.atual() == '.':
-            self.avanca()  # .
+        # Verifica se fechou corretamente com outra aspa simples
+        if self.pos < self.tamanho and self.atual() == "'":
+            self.avanca()  # consome a aspa simples de fechamento '
             return (self.fonte[inicio:self.pos], LIT_CHAR, lin, col)
 
         return (self.fonte[inicio:self.pos], ERRO_SIMBOLO, lin, col)
@@ -253,16 +255,15 @@ class Lexer:
             # Número
             if self.eh_digito(c):
                 token = self.le_numero()
-                if token[1] in (ERRO_NUMERO,):
+                if token[1] == ERRO_NUMERO:
                     self.erro = (f"Erro léxico: número mal formado '{token[0]}'", lin, col)
                     self.tokens.append(token)
                     return False
                 self.tokens.append(token)
                 continue
 
-            # Lógica do Ponto (Float, Char ou Ponto Final)
+            # Lógica do Ponto (Float ou Ponto Final)
             if c == '.':
-                # Float: .92
                 if self.eh_digito(self.proximo()):
                     token = self.le_float_por_ponto()
                     if token[1] == ERRO_SIMBOLO:
@@ -271,23 +272,13 @@ class Lexer:
                         return False
                     self.tokens.append(token)
                     continue
-                # Char: .A. (Verifica se duas casas para frente tem outro ponto)
-                elif self.peek(2) == '.':
-                    token = self.le_char()
-                    if token[1] == ERRO_SIMBOLO:
-                        self.erro = (f"Erro léxico: char mal formado '{token[0]}'", lin, col)
-                        self.tokens.append(token)
-                        return False
-                    self.tokens.append(token)
-                    continue
-                # Ponto Final Simples
                 else:
                     self.avanca()
                     self.tokens.append((".", DEL_PONTO, lin, col))
                     continue
 
-            # Char: .'X'.
-            if c == '.' and self.proximo() == "'":
+            # Char ('X')
+            if c == "'":
                 token = self.le_char()
                 if token[1] == ERRO_SIMBOLO:
                     self.erro = (f"Erro léxico: char mal formado '{token[0]}'", lin, col)
