@@ -1,0 +1,54 @@
+causo
+Programa completo para testar
+absolutamente todos os tokens integrados
+fim_do_causo
+
+bora_cumpade main()
+simbora
+    // Declaracao de todos os tipos
+    trem_di_numeru inteiro fica_assim_entao 10 uai
+    trem_cum_virgula quebrado fica_assim_entao 3.14 uai
+    trem_discrita texto fica_assim_entao "Linguagem bão demais" uai
+    trosso letra fica_assim_entao 'M' uai
+    trem_discolhe logico fica_assim_entao eh uai
+    
+    // Entrada
+    xove(inteiro) uai
+    
+    // Testando operadores aritmeticos e relacionais
+    inteiro fica_assim_entao (inteiro + 5 - 2 veiz 3 sob 1) % 2 uai
+    trem_di_numeru divisao_int fica_assim_entao 5 / 2 uai
+    
+    // Estruturas de decisao e operadores logicos (AND, OR, XOR, NOT)
+    uai_se (inteiro >= 0 tamem logico mema_coisa eh quarque_um vam_marca num_eh um_o_oto inteiro < 5)
+    simbora
+        oia_proce_ve(texto) uai
+    cabo
+    uai_senao
+    simbora
+        inteiro fica_assim_entao 0x1F uai
+    cabo
+    
+    // Switch case
+    dependenu (inteiro)
+    simbora
+        du_casu 1:
+            para_o_trem uai
+    cabo
+
+    // Lacos de repeticao
+    roda_esse_trem (trem_di_numeru i fica_assim_entao 0 uai i <= 10 uai i fica_assim_entao i + 1)
+    simbora
+        uai_se (i neh_nada 5)
+        simbora
+            toca_o_trem uai
+        cabo
+    cabo
+
+    enquanto_tiver_trem (inteiro > 0)
+    simbora
+        inteiro fica_assim_entao inteiro - 1 uai
+    cabo
+    
+    ta_bao 0 uai
+cabo

@@ -1,0 +1,25 @@
+// TESTE DE ERROS FATAIS
+// Descomente uma linha por vez para testar no console.
+
+// 1. Simbolo desconhecido (ERRO_SIMBOLO)
+// trem_di_numeru preco fica_assim_entao 10 $ uai
+
+// 2. Numero mal formado - Hexadecimal invalido (ERRO_NUMERO)
+// trem_di_numeru falha_hexa fica_assim_entao 0x3G uai
+
+// 3. Numero mal formado - Octal invalido (ERRO_NUMERO)
+// trem_di_numeru falha_octal fica_assim_entao 078 uai
+
+// 4. Float mal formado (ERRO_SIMBOLO)
+// trem_cum_virgula falha_float fica_assim_entao . uai
+
+// 5. Char mal formado (ERRO_SIMBOLO)
+// trosso letra fica_assim_entao 'AB' uai
+
+// 6. String nao fechada (ERRO_STRING)
+// trem_discrita texto fica_assim_entao "Esqueci de fechar a aspa uai
+
+// 7. Causo nao fechado (ERRO_CAUSO) - Deixe no fim do arquivo
+/*
+causo
+Comecei a contar uma historia e o arquivo acabou...
