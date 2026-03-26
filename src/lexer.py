@@ -79,7 +79,7 @@ class Lexer:
 
     def pula_comentario_bloco(self, lin: int, col: int) -> bool:
         """
-        Consome 'causo ... fim do causo'.
+        Consome 'causo ... fim_do_causo'.
         Retorna True se fechou corretamente, False se chegou ao EOF sem fechar.
         """
         # consome 'causo'
@@ -87,9 +87,9 @@ class Lexer:
             self.avanca()
 
         while self.pos < self.tamanho:
-            # procura 'fim do causo'
-            if self.fonte[self.pos:self.pos + 11] == 'fim do causo':
-                for _ in range(11):
+            # procura 'fim_do_causo'
+            if self.fonte[self.pos:self.pos + 12] == 'fim_do_causo':
+                for _ in range(12):
                     self.avanca()
                 return True
             self.avanca()
