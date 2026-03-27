@@ -1,4 +1,5 @@
 from tokens import *
+import sys
 
 class Lexer:
     def __init__(self, fonte: str):
@@ -13,6 +14,14 @@ class Lexer:
     # -------------------------------------------------------------------------
     # Helpers de navegação
     # -------------------------------------------------------------------------
+
+    def disparar_erro_fatal(self, tipo_erro: str, lexema: str, lin: int, col: int):
+        """Interrompe a execução imediatamente e exibe o erro fatal simulando o formato de saída."""
+        print(f"\n[ERRO FATAL LÉXICO]")
+        print(f'("{lexema}", "{tipo_erro}", {lin}, {col})')
+        print("Execução abortada. Nenhum arquivo de saída foi gerado.\n")
+        
+        sys.exit(1)
 
     def atual(self) -> str:
         """Retorna o caractere na posição atual sem avançar."""
@@ -121,15 +130,22 @@ class Lexer:
         if self.atual() == '0' and self.proximo() == 'x':
             self.avanca()  # 0
             self.avanca()  # x
+            # Se logo depois do 0x vier lixo (Ex: 0xZ)
             if not self.eh_digito_hex(self.atual()):
-                # consome o lixo e retorna erro
-                while self.pos < self.tamanho and not self.atual().isspace():
+                while self.pos < self.tamanho and self.eh_corpo_ident(self.atual()):
                     self.avanca()
-                return (self.fonte[inicio:self.pos], ERRO_NUMERO, lin, col)
+                self.disparar_erro_fatal("Número hexadecimal mal formado", self.fonte[inicio:self.pos], lin, col)
+            # Consome os hexadecimais válidos (No 0x3G, ele para no 3)
             while self.pos < self.tamanho and self.eh_digito_hex(self.atual()):
                 self.avanca()
+            # Verifica se sobrou lixo colado no final (O 'G' do 0x3G cai aqui!)
+            if self.pos < self.tamanho and self.eh_corpo_ident(self.atual()):
+                while self.pos < self.tamanho and self.eh_corpo_ident(self.atual()):
+                    self.avanca()
+                self.disparar_erro_fatal("Número hexadecimal mal formado", self.fonte[inicio:self.pos], lin, col)
+                
             return (self.fonte[inicio:self.pos], LIT_NUM_HEX, lin, col)
-
+        
         # Octal: 0[1-7][0-7]*
         if self.atual() == '0' and self.eh_digito_oct(self.proximo()) and self.proximo() != '0':
             self.avanca()  # 0
@@ -139,7 +155,7 @@ class Lexer:
             if self.pos < self.tamanho and self.eh_digito(self.atual()):
                 while self.pos < self.tamanho and self.eh_digito(self.atual()):
                     self.avanca()
-                return (self.fonte[inicio:self.pos], ERRO_NUMERO, lin, col)
+                self.disparar_erro_fatal("Número octal mal formado", self.fonte[inicio:self.pos], lin, col)
             return (self.fonte[inicio:self.pos], LIT_NUM_OCT, lin, col)
 
         # Inteiro ou float
@@ -164,7 +180,7 @@ class Lexer:
         self.avanca()  # consome o ponto
 
         if not self.eh_digito(self.atual()):
-            return (self.fonte[inicio:self.pos], ERRO_SIMBOLO, lin, col)
+            self.disparar_erro_fatal("Float mal formado", self.fonte[inicio:self.pos], lin, col)
 
         while self.pos < self.tamanho and self.eh_digito(self.atual()):
             self.avanca()
@@ -185,10 +201,10 @@ class Lexer:
                 self.avanca()  # fecha "
                 return (self.fonte[inicio:self.pos], LIT_STRING, lin, col)
             if c == '\n':
-                return (self.fonte[inicio:self.pos], ERRO_STRING, lin, col)
+                self.disparar_erro_fatal("String não fechada", self.fonte[inicio:self.pos], lin, col)
             self.avanca()
 
-        return (self.fonte[inicio:self.pos], ERRO_STRING, lin, col)
+        self.disparar_erro_fatal("String não fechada", self.fonte[inicio:self.pos], lin, col)
 
     def le_char(self):
         """Lê literal char delimitado por aspas simples ('X')."""
@@ -205,7 +221,7 @@ class Lexer:
             self.avanca()  # consome a aspa simples de fechamento '
             return (self.fonte[inicio:self.pos], LIT_CHAR, lin, col)
 
-        return (self.fonte[inicio:self.pos], ERRO_SIMBOLO, lin, col)
+        self.disparar_erro_fatal("Char mal formado", self.fonte[inicio:self.pos], lin, col)
 
     # -------------------------------------------------------------------------
     # Loop principal
@@ -241,9 +257,7 @@ class Lexer:
                 (self.pos + 5 >= self.tamanho or not self.eh_corpo_ident(self.peek(5)))):
                 ok = self.pula_comentario_bloco(lin, col)
                 if not ok:
-                    self.erro = (f"Erro léxico: comentário 'causo' não fechado", lin, col)
-                    self.tokens.append(("causo", ERRO_CAUSO, lin, col))
-                    return False
+                    self.disparar_erro_fatal("Comentário multilinha não fechado", "causo", lin, col)
                 continue
 
             # Identificador ou palavra reservada
@@ -255,10 +269,6 @@ class Lexer:
             # Número
             if self.eh_digito(c):
                 token = self.le_numero()
-                if token[1] == ERRO_NUMERO:
-                    self.erro = (f"Erro léxico: número mal formado '{token[0]}'", lin, col)
-                    self.tokens.append(token)
-                    return False
                 self.tokens.append(token)
                 continue
 
@@ -266,10 +276,6 @@ class Lexer:
             if c == '.':
                 if self.eh_digito(self.proximo()):
                     token = self.le_float_por_ponto()
-                    if token[1] == ERRO_SIMBOLO:
-                        self.erro = (f"Erro léxico: float mal formado", lin, col)
-                        self.tokens.append(token)
-                        return False
                     self.tokens.append(token)
                     continue
                 else:
@@ -280,20 +286,12 @@ class Lexer:
             # Char ('X')
             if c == "'":
                 token = self.le_char()
-                if token[1] == ERRO_SIMBOLO:
-                    self.erro = (f"Erro léxico: char mal formado '{token[0]}'", lin, col)
-                    self.tokens.append(token)
-                    return False
                 self.tokens.append(token)
                 continue
 
             # String
             if c == '"':
                 token = self.le_string()
-                if token[1] == ERRO_STRING:
-                    self.erro = (f"Erro léxico: string não fechada '{token[0]}'", lin, col)
-                    self.tokens.append(token)
-                    return False
                 self.tokens.append(token)
                 continue
 
@@ -358,8 +356,6 @@ class Lexer:
 
             # Símbolo desconhecido
             self.avanca()
-            self.erro = (f"Erro léxico: símbolo desconhecido '{c}'", lin, col)
-            self.tokens.append((c, ERRO_SIMBOLO, lin, col))
-            return False
+            self.disparar_erro_fatal("Símbolo desconhecido", c, lin, col)
 
         return True

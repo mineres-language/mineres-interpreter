@@ -64,11 +64,11 @@ DEL_ABRE_PAR        = 503
 DEL_FECHA_PAR       = 504
 DEL_VIRGULA         = 505
 
-# Erros (900–999)
-ERRO_STRING         = 900
-ERRO_NUMERO         = 901
-ERRO_SIMBOLO        = 902
-ERRO_CAUSO          = 903
+# # Erros (900–999)
+# ERRO_STRING         = 900
+# ERRO_NUMERO         = 901
+# ERRO_SIMBOLO        = 902
+# ERRO_CAUSO          = 903
 
 # Booleanos (junto das Palavras Reservadas)
 PR_EH               = 132

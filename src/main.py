@@ -14,7 +14,7 @@ def formata_saida_vetor(tokens: list) -> str:
     return "".join(linhas)
 
 def main():
-    arquivo_entrada = "input/entrada.uai"
+    arquivo_entrada = "input/teste_4.uai"
     arquivo_saida   = "output/saida.uai"
 
     try:
@@ -25,14 +25,11 @@ def main():
         sys.exit(1)
 
     lexer   = Lexer(fonte)
-    sucesso = lexer.tokenizar()
+    lexer.tokenizar()
 
     saida_vetor = formata_saida_vetor(lexer.tokens)
     with open(arquivo_saida, "w", encoding="utf-8") as f:
         f.write(saida_vetor)
-
-    if not sucesso:
-        sys.exit(1)
 
 if __name__ == "__main__":
     main()

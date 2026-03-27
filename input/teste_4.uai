@@ -10,7 +10,7 @@
 // 3. Numero mal formado - Octal invalido (ERRO_NUMERO)
 // trem_di_numeru falha_octal fica_assim_entao 078 uai
 
-// 4. Float mal formado (ERRO_SIMBOLO)
+// 4. Float mal formado (ERRO_SIMBOLO)                  --> PASSOU
 // trem_cum_virgula falha_float fica_assim_entao . uai
 
 // 5. Char mal formado (ERRO_SIMBOLO)
@@ -20,6 +20,5 @@
 // trem_discrita texto fica_assim_entao "Esqueci de fechar a aspa uai
 
 // 7. Causo nao fechado (ERRO_CAUSO) - Deixe no fim do arquivo
-/*
-causo
-Comecei a contar uma historia e o arquivo acabou...
+// causo
+// Comecei a contar uma historia e o arquivo acabou...
