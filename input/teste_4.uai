@@ -10,7 +10,7 @@
 // 3. Numero mal formado - Octal invalido (ERRO_NUMERO)
 // trem_di_numeru falha_octal fica_assim_entao 078 uai
 
-// 4. Float mal formado (ERRO_SIMBOLO)                  --> PASSOU
+// 4. Float mal formado (ERRO_SIMBOLO)
 // trem_cum_virgula falha_float fica_assim_entao . uai
 
 // 5. Char mal formado (ERRO_SIMBOLO)
