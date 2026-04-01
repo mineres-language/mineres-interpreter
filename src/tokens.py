@@ -79,6 +79,8 @@ OP_DIVISAO_INT      = 415
 DEL_ABRE_CHAVE      = 506
 DEL_FECHA_CHAVE     = 507
 DEL_PONTO           = 508
+DEL_PONTO_VIRGULA   = 509
+DEL_DOIS_PONTOS     = 510
 
 # =============================================================================
 # TABELA DE PALAVRAS RESERVADAS E OPERADORES TEXTUAIS

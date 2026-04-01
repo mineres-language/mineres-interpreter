@@ -1,5 +1,12 @@
+"teste \n de \n string"
+"teste \n de \t string"
 trem_di_numeru paozinhos fica_assim_entao 5 uai
 trem_discolhe flag fica_assim_entao eh uai
-trosso letra fica_assim_entao .A. uai
+trosso letra fica_assim_entao A uai
 10 / 2
-{ } .
+{ }
+trem_discrita "teste \n de string";
+// 
+"aa"
+'a'
+

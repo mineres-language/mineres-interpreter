@@ -194,6 +194,32 @@ class Lexer:
 
         return (self.fonte[inicio:self.pos], LIT_NUM_FLOAT, lin, col)
 
+    def processa_escape(self, c: str) -> str:
+        """Processa sequência de escape em strings."""
+        if c == 'n':
+            return '\n'
+        elif c == 't':
+            return '\t'
+        elif c == '"':
+            return '"'
+        elif c == '\\':
+            return '\\'
+        else:
+            return '\\' + c
+
+    def decodifica_string(self, raw: str) -> str:
+        """Decodifica escapes em uma string já extraída das aspas."""
+        i = 0
+        out = ''
+        while i < len(raw):
+            if raw[i] == '\\' and i + 1 < len(raw):
+                i += 1
+                out += self.processa_escape(raw[i])
+            else:
+                out += raw[i]
+            i += 1
+        return out
+
     def le_string(self):
         """Lê string delimitada por aspas duplas."""
         inicio = self.pos
@@ -206,13 +232,14 @@ class Lexer:
             c = self.atual()
             if c == '"':
                 self.avanca()  # fecha "
-                return (self.fonte[inicio:self.pos], LIT_STRING, lin, col)
+                raw = self.fonte[inicio+1:self.pos-1]
+                return (self.decodifica_string(raw), LIT_STRING, lin, col)
             if c == '\n':
                 self.disparar_erro_fatal("String não fechada", self.fonte[inicio:self.pos], lin, col)
             self.avanca()
 
         self.disparar_erro_fatal("String não fechada", self.fonte[inicio:self.pos], lin, col)
-
+   
     def le_char(self):
         """Lê literal char delimitado por aspas simples ('X')."""
         inicio = self.pos
@@ -220,15 +247,33 @@ class Lexer:
         col    = self.coluna
 
         self.avanca()  # consome a aspa simples de abertura '
-        if self.pos < self.tamanho:
+
+        if self.pos >= self.tamanho:
+            self.disparar_erro_fatal("Char mal formado", self.fonte[inicio:self.pos], lin, col)
+
+        c = self.atual()
+
+        if c == "'":
+            # char vazio ou aspas consecutivas
+            self.disparar_erro_fatal("Char mal formado", self.fonte[inicio:self.pos+1], lin, col)
+
+        if c == "\\":
+            # suporta escape em char '\n', '\'', '\\', etc.
+            self.avanca()
+            if self.pos >= self.tamanho:
+                self.disparar_erro_fatal("Char mal formado", self.fonte[inicio:self.pos], lin, col)
+            c = self.processa_escape(self.atual())
+            self.avanca()
+        else:
             self.avanca()
 
-        # Verifica se fechou corretamente com outra aspa simples
-        if self.pos < self.tamanho and self.atual() == "'":
-            self.avanca()  # consome a aspa simples de fechamento '
-            return (self.fonte[inicio:self.pos], LIT_CHAR, lin, col)
+        # agora deve vir a aspa de fechamento
+        if self.pos >= self.tamanho or self.atual() != "'":
+            self.disparar_erro_fatal("Char mal formado", self.fonte[inicio:self.pos], lin, col)
 
-        self.disparar_erro_fatal("Char mal formado", self.fonte[inicio:self.pos], lin, col)
+        self.avanca()  # consome a aspa simples de fechamento '
+
+        return (c, LIT_CHAR, lin, col)
 
     # -------------------------------------------------------------------------
     # Loop principal
@@ -357,6 +402,16 @@ class Lexer:
             if c == '}':
                 self.avanca()
                 self.tokens.append(("}", DEL_FECHA_CHAVE, lin, col))
+                continue
+
+            if c == ';':
+                self.avanca()
+                self.tokens.append((";", DEL_PONTO_VIRGULA, lin, col))
+                continue
+                
+            if c == ':':
+                self.avanca()
+                self.tokens.append((": ", DEL_DOIS_PONTOS, lin, col))
                 continue
 
             # Símbolo desconhecido

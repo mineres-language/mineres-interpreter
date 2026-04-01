@@ -14,7 +14,7 @@ def formata_saida_vetor(tokens: list) -> str:
     return "".join(linhas)
 
 def main():
-    arquivo_entrada = "input/teste_4.uai"
+    arquivo_entrada = "input/entrada.uai"
     arquivo_saida   = "output/saida.uai"
 
     try:
@@ -26,6 +26,8 @@ def main():
 
     lexer   = Lexer(fonte)
     lexer.tokenizar()
+
+    # print(lexer.tokens[0][0])  # printa o lexema do primeiro token
 
     saida_vetor = formata_saida_vetor(lexer.tokens)
     with open(arquivo_saida, "w", encoding="utf-8") as f:
