@@ -164,13 +164,11 @@ class Lexer:
 
         if self.pos < self.tamanho and self.atual() == '.':
             # float: [0-9]+.[0-9]*
-            # Encontrou um ponto depois de dígitos (ex: 10.)
-            inicio_erro = self.pos - len(self.fonte[inicio:self.pos]) # para pegar o número todo
             self.avanca()  # consome o ponto
 
             if not self.eh_digito(self.atual()):
-            # Se depois do ponto não vier um número = erro!
-                self.disparar_erro_fatal("Float mal formado (falta dígitos após o ponto)", self.fonte[inicio:self.pos], lin, col)
+                lexema_formatado = self.fonte[inicio:self.pos] + '0'
+                return(lexema_formatado, LIT_NUM_FLOAT, lin, col)
 
             while self.pos < self.tamanho and self.eh_digito(self.atual()):
                 self.avanca()
@@ -186,13 +184,16 @@ class Lexer:
 
         self.avanca()  # consome o ponto
 
+        # Se for apenas o ponto isolado (ex: ". "), o loop principal já deve tratar ou disparar aqui
         if not self.eh_digito(self.atual()):
             self.disparar_erro_fatal("Float mal formado", self.fonte[inicio:self.pos], lin, col)
 
         while self.pos < self.tamanho and self.eh_digito(self.atual()):
             self.avanca()
 
-        return (self.fonte[inicio:self.pos], LIT_NUM_FLOAT, lin, col)
+        # Formata ".5" para "0.5"
+        lexema_final = "0" + self.fonte[inicio:self.pos]
+        return (lexema_final, LIT_NUM_FLOAT, lin, col)
 
     def processa_escape(self, c: str) -> str:
         """Processa sequência de escape em strings."""
