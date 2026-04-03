@@ -21,6 +21,7 @@ PR_TOCA_O_TREM      = 123
 
 PR_BORA_CUMPADE     = 130
 PR_TA_BAO           = 131
+PR_MAIN             = 132
 
 PR_OIA_PROCE_VE     = 140
 PR_XOVE             = 141
@@ -100,6 +101,7 @@ PALAVRAS_RESERVADAS = {
     "para_o_trem":        PR_PARA_O_TREM,
     "toca_o_trem":        PR_TOCA_O_TREM,
     "bora_cumpade":       PR_BORA_CUMPADE,
+    "main":               PR_MAIN,
     # Variáveis e Dados
     "trem_di_numeru":     PR_TREM_DI_NUMERU,
     "trem_cum_virgula":   PR_TREM_CUM_VIRGULA,
