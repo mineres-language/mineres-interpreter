@@ -19,7 +19,7 @@ class Lexer:
         """Interrompe a execução imediatamente e exibe o erro fatal simulando o formato de saída."""
         print(f"\n[ERRO FATAL LÉXICO]")
         print(f'("{lexema}", "{tipo_erro}", {lin}, {col})')
-        print("Execução abortada. Nenhum arquivo de saída foi gerado.\n")
+        print("Execução abortada. Lista de tokens não foi gerada.\n")
         
         sys.exit(1)
 
@@ -80,9 +80,9 @@ class Lexer:
             self.avanca()
 
     def pula_comentario_linha(self):
-        """Consome -- até o fim da linha."""
-        self.avanca()  # -
-        self.avanca()  # -
+        """Consome // até o fim da linha."""
+        self.avanca()  # /
+        self.avanca()  # /
         while self.pos < self.tamanho and self.atual() != '\n':
             self.avanca()
 
@@ -97,7 +97,11 @@ class Lexer:
 
         while self.pos < self.tamanho:
             # procura 'fim_do_causo'
-            if self.fonte[self.pos:self.pos + 12] == 'fim_do_causo':
+            if (
+                self.pos + 12 <= self.tamanho and
+                self.fonte.startswith('fim_do_causo', self.pos) and
+                not self.eh_corpo_ident(self.peek(12))
+            ):
                 for _ in range(12):
                     self.avanca()
                 return True
@@ -147,7 +151,7 @@ class Lexer:
             return (self.fonte[inicio:self.pos], LIT_NUM_HEX, lin, col)
         
         # Octal: 0[1-7][0-7]*
-        if self.atual() == '0' and self.eh_digito_oct(self.proximo()) and self.proximo() != '0':
+        if self.atual() == '0' and self.eh_digito_oct(self.proximo()):
             self.avanca()  # 0
             while self.pos < self.tamanho and self.eh_digito_oct(self.atual()):
                 self.avanca()
@@ -202,45 +206,45 @@ class Lexer:
         elif c == 't':
             return '\t'
         elif c == '"':
-            return '"'
+            return '\"'
+        elif c == "'":
+            return "\'"
         elif c == '\\':
             return '\\'
         else:
-            return '\\' + c
-
-    def decodifica_string(self, raw: str) -> str:
-        """Decodifica escapes em uma string já extraída das aspas."""
-        i = 0
-        out = ''
-        while i < len(raw):
-            if raw[i] == '\\' and i + 1 < len(raw):
-                i += 1
-                out += self.processa_escape(raw[i])
-            else:
-                out += raw[i]
-            i += 1
-        return out
+            self.disparar_erro_fatal("Escape inválido", "\\" + c, self.linha, self.coluna)
 
     def le_string(self):
-        """Lê string delimitada por aspas duplas."""
-        inicio = self.pos
-        lin    = self.linha
-        col    = self.coluna
-
-        self.avanca()  # abre "
+        inicio_pos = self.pos
+        lin, col = self.linha, self.coluna
+        self.avanca()  # Pula a aspa de abertura (")
+        
+        conteudo_processado = []
 
         while self.pos < self.tamanho:
             c = self.atual()
-            if c == '"':
-                self.avanca()  # fecha "
-                raw = self.fonte[inicio+1:self.pos-1]
-                return (self.decodifica_string(raw), LIT_STRING, lin, col)
-            if c == '\n':
-                self.disparar_erro_fatal("String não fechada", self.fonte[inicio:self.pos], lin, col)
+
+            if c == '\\':  # Encontrou um escape
+                self.avanca() # Pula a barra
+                if self.pos >= self.tamanho:
+                    self.disparar_erro_fatal("Escape inválido no final da string", self.fonte[inicio_pos:self.pos], lin, col)
+                proximo = self.atual()
+                # Chama sua função de processamento de escape
+                conteudo_processado.append(self.processa_escape(proximo))
+            elif c == '"':  # Encontrou o fechamento real
+                self.avanca()
+                # Retorna o conteúdo já montado/processado
+                resultado = "".join(conteudo_processado)
+                return (resultado, LIT_STRING, lin, col)
+            elif c == '\n':
+                self.disparar_erro_fatal("String não fechada antes da quebra de linha", self.fonte[inicio_pos:self.pos], lin, col)
+            else:
+                conteudo_processado.append(c)
+            
             self.avanca()
 
-        self.disparar_erro_fatal("String não fechada", self.fonte[inicio:self.pos], lin, col)
-   
+        self.disparar_erro_fatal("String não fechada (EOF)", self.fonte[inicio_pos:self.pos], lin, col)
+
     def le_char(self):
         """Lê literal char delimitado por aspas simples ('X')."""
         inicio = self.pos
@@ -412,7 +416,7 @@ class Lexer:
                 
             if c == ':':
                 self.avanca()
-                self.tokens.append((": ", DEL_DOIS_PONTOS, lin, col))
+                self.tokens.append((":", DEL_DOIS_PONTOS, lin, col))
                 continue
 
             # Símbolo desconhecido

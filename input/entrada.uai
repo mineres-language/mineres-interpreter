@@ -1,4 +1,5 @@
-.
+"teste \"aaaa\" de string";
+"teste \' de string";
 .5
 10.
 bora_cumpade
@@ -15,3 +16,6 @@ trem_discrita "teste \n de string";
 "aa"
 'a'
 
+causo
+aaaa
+fim_do_causo

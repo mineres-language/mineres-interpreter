@@ -23,6 +23,10 @@ PR_BORA_CUMPADE     = 130
 PR_TA_BAO           = 131
 PR_MAIN             = 132
 
+# Booleanos (junto das Palavras Reservadas)
+PR_EH               = 133
+PR_NUM_EH           = 134
+
 PR_OIA_PROCE_VE     = 140
 PR_XOVE             = 141
 
@@ -70,10 +74,6 @@ DEL_VIRGULA         = 505
 # ERRO_NUMERO         = 901
 # ERRO_SIMBOLO        = 902
 # ERRO_CAUSO          = 903
-
-# Booleanos (junto das Palavras Reservadas)
-PR_EH               = 132
-PR_NUM_EH           = 133
 
 # Novos Operadores e Delimitadores
 OP_DIVISAO_INT      = 415
