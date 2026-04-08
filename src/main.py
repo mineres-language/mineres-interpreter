@@ -1,6 +1,8 @@
-import sys
 from lexer import Lexer
+from parser import Parser
 import os
+import sys
+import time
 
 def formata_saida_vetor(tokens: list) -> str:
     linhas = ["[\n"]
@@ -45,17 +47,24 @@ def main():
     lexer = Lexer(fonte)
 
     #contagem de tempo de execução do lexer
-    import time
     start_time = time.time()
     lexer.tokenizar()
     end_time = time.time()
 
     print(f"Tempo de execução do lexer: {end_time - start_time:.10f} segundos")
 
-    saida_vetor = formata_saida_vetor(lexer.tokens)
+    # saida_vetor = formata_saida_vetor(lexer.tokens)
 
     # print_lista_tokens(saida_vetor, arquivo_entrada, arquivo_saida)
 
+    # with open(arquivo_saida, "w", encoding="utf-8") as f:
+    #     f.write(saida_vetor)
+
+    # INÍCIO DO ANALISADOR SINTÁTICO
+    parser = Parser(lexer.tokens)
+    parser.iniciar()
+
+    saida_vetor = formata_saida_vetor(lexer.tokens)
     with open(arquivo_saida, "w", encoding="utf-8") as f:
         f.write(saida_vetor)
 
