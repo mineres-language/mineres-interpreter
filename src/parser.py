@@ -49,7 +49,7 @@ class Parser:
             self.disparar_erro_sintatico(nome_esperado_para_erro, atual)
 
     # -------------------------------------------------------------------------
-    # REGRAS DA GRAMÁTICA (Árvore de Decisão)
+    # Regras da Gramática (Árvore de Decisão)
     # -------------------------------------------------------------------------
 
     def parse_function(self):
@@ -68,9 +68,136 @@ class Parser:
 
     def parse_stmtList(self):
         """ <stmtList> -> <stmt> <stmtList> | & ; """
-        # ETAPA 1: Por enquanto, o bloco finge que está vazio (Lê o '&' / Lambda).
-        # Implementaremos as validações de comandos de verdade na Etapa 2.
-        pass
+        atual = self.token_atual()[1]
+        
+        # O conjunto FIRST de todos os comandos que faremos (por enquanto, tipos de variaveis e IO)
+        primeiros_de_stmt = [
+            PR_TREM_DI_NUMERU, PR_TREM_CUM_VIRGULA, PR_TREM_DISCRITA, PR_TREM_DISCOLHE, PR_TROSSO,
+            PR_XOVE, PR_OIA_PROCE_VE
+        ]
+        
+        if atual in primeiros_de_stmt:
+            self.parse_stmt()
+            self.parse_stmtList() # Chama a si mesma para ver se tem mais comandos na linha de baixo
+        elif atual == DEL_CABO:
+            # Encontrou o final do bloco! Esse é o Épsilon / Vazio (&) da gramática.
+            # Apenas retornamos (subimos na árvore) sem consumir nada.
+            return 
+        else:
+            self.disparar_erro_sintatico("Início de comando válido ou 'cabo'", self.token_atual())
+
+    def parse_stmt(self):
+        """ <stmt> -> <ioStmt> | <declaration> | ... (outros no futuro) """
+        atual = self.token_atual()[1]
+        
+        tipos_variaveis = [PR_TREM_DI_NUMERU, PR_TREM_CUM_VIRGULA, PR_TREM_DISCRITA, PR_TREM_DISCOLHE, PR_TROSSO]
+        
+        if atual in tipos_variaveis:
+            self.parse_declaration()
+        elif atual in [PR_XOVE, PR_OIA_PROCE_VE]:
+            self.parse_ioStmt()
+        else:
+            self.disparar_erro_sintatico("Comando válido", self.token_atual())
+    
+    # -------------------------------------------------------------------------
+    # Declaração de Variáveis
+    # -------------------------------------------------------------------------
+
+    def parse_declaration(self):
+        """ <declaration> -> <type> <identList> 'uai' ; """
+        self.parse_type()
+        self.parse_identList()
+        self.consome(DEL_UAI, "'uai'")
+
+    def parse_type(self):
+        """ <type> -> 'trem_di_numeru' | 'trem_cum_virgula' | 'trem_discrita' | 'trem_discolhe' | 'trosso' """
+        atual = self.token_atual()[1]
+        tipos_validos = {
+            PR_TREM_DI_NUMERU: "'trem_di_numeru'",
+            PR_TREM_CUM_VIRGULA: "'trem_cum_virgula'",
+            PR_TREM_DISCRITA: "'trem_discrita'",
+            PR_TREM_DISCOLHE: "'trem_discolhe'",
+            PR_TROSSO: "'trosso'"
+        }
+        
+        if atual in tipos_validos:
+            self.consome(atual, tipos_validos[atual])
+        else:
+            self.disparar_erro_sintatico("Tipo de variável", self.token_atual())
+
+    def parse_identList(self):
+        """ <identList> -> 'IDENT' <restoIdentList> """
+        self.consome(IDENTIFICADOR, "Identificador (nome de variável)")
+        self.parse_restoIdentList()
+
+    def parse_restoIdentList(self):
+        """ <restoIdentList> -> ',' 'IDENT' <restoIdentList> | & ; """
+        atual = self.token_atual()[1]
+        if atual == DEL_VIRGULA:
+            self.consome(DEL_VIRGULA, "','")
+            self.consome(IDENTIFICADOR, "Identificador")
+            self.parse_restoIdentList()
+        else:
+            # Não tem vírgula? Então a lista acabou (Regra & / Lambda)
+            return
+    
+    # -------------------------------------------------------------------------
+    # I/O (Prints e Inputs)
+    # -------------------------------------------------------------------------
+    
+    def parse_ioStmt(self):
+        """ <ioStmt> -> 'xove' '(' <type> ',' 'IDENT' ')' 'uai' | 'oia_proce_ve' '(' <outList> ')' 'uai' """
+        atual = self.token_atual()[1]
+        
+        if atual == PR_XOVE: # Input
+            self.consome(PR_XOVE, "'xove'")
+            self.consome(DEL_ABRE_PAR, "'('")
+            self.parse_type()
+            self.consome(DEL_VIRGULA, "','")
+            self.consome(IDENTIFICADOR, "Identificador")
+            self.consome(DEL_FECHA_PAR, "')'")
+            self.consome(DEL_UAI, "'uai'")
+            
+        elif atual == PR_OIA_PROCE_VE: # Output/Print
+            self.consome(PR_OIA_PROCE_VE, "'oia_proce_ve'")
+            self.consome(DEL_ABRE_PAR, "'('")
+            self.parse_outList()
+            self.consome(DEL_FECHA_PAR, "')'")
+            self.consome(DEL_UAI, "'uai'")
+
+    def parse_outList(self):
+        """ <outList> -> <out> <restoOutList> """
+        self.parse_out()
+        self.parse_restoOutList()
+
+    def parse_out(self):
+        """ <out> -> <fatorZin> """
+        self.parse_fatorZin()
+
+    def parse_restoOutList(self):
+        """ <restoOutList> -> ',' <out> <restoOutList> | & ; """
+        if self.token_atual()[1] == DEL_VIRGULA:
+            self.consome(DEL_VIRGULA, "','")
+            self.parse_out()
+            self.parse_restoOutList()
+        else:
+            return # Vazio / Epsilon
+
+    def parse_fatorZin(self):
+        """ <fatorZin> -> 'STR' | 'IDENT' | 'NUMint' | 'NUMfloat' | 'valorBooleano' | 'valorChar' """
+        atual = self.token_atual()[1]
+        
+        # Tudo que pode ser impresso/passado
+        literais_validos = [
+            LIT_STRING, IDENTIFICADOR, LIT_NUM_INT, LIT_NUM_FLOAT, 
+            LIT_CHAR, PR_EH, PR_NUM_EH
+        ]
+        
+        if atual in literais_validos:
+            # Consome o que quer que seja e avança
+            self.consome(atual, "Valor Literal ou Variável")
+        else:
+            self.disparar_erro_sintatico("Valor para impressão", self.token_atual())
 
     # -------------------------------------------------------------------------
     # Ponto de Entrada
