@@ -1,4 +1,4 @@
-from tokens import *
+from .tokens import *
 import sys
 
 class Lexer:
@@ -424,3 +424,13 @@ class Lexer:
             self.disparar_erro_fatal("Símbolo desconhecido", c, lin, col)
 
         return True
+    
+def formata_tokens(tokens: list) -> str:
+    """Helper para transformar a lista de tokens em string formatada."""
+    linhas = ["[\n"]
+    for i, (lexema, codigo, linha, coluna) in enumerate(tokens):
+        lex_str = f'"{lexema}"'
+        virgula = "," if i < len(tokens) - 1 else ""
+        linhas.append(f"\t({lex_str:<20}, {codigo:>3}, {linha}, {coluna:>2}){virgula}\n")
+    linhas.append("]")
+    return "".join(linhas)

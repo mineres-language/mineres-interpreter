@@ -1,5 +1,5 @@
 import sys
-from tokens import *
+from lexer.tokens import *
 
 class Parser:
     def __init__(self, tokens: list):
@@ -471,4 +471,4 @@ class Parser:
         if self.pos < self.tamanho:
             self.disparar_erro_sintatico("Fim do arquivo (Nenhum código fora da main)", self.token_atual())
 
-        print("\n[SUCESSO] Análise Sintática concluída! O esqueleto do programa está correto.")
+        return True
