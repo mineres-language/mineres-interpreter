@@ -13,6 +13,7 @@ PR_UAI_SE           = 110
 PR_UAI_SENAO        = 111
 PR_DEPENDENU        = 112
 PR_DU_CASU          = 113
+PR_UAI_SO           = 114
 
 PR_RODA_ESSE_TREM   = 120
 PR_ENQUANTO         = 121
@@ -96,6 +97,7 @@ PALAVRAS_RESERVADAS = {
     "enquanto_tiver_trem":PR_ENQUANTO,
     "dependenu":          PR_DEPENDENU,
     "du_casu":            PR_DU_CASU,
+    "uai_so":             PR_UAI_SO,
     # Fluxo e Funções
     "ta_bao":             PR_TA_BAO,
     "para_o_trem":        PR_PARA_O_TREM,

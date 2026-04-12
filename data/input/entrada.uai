@@ -1,7 +1,23 @@
 // *Testes de estrutura básica do programa 
 bora_cumpade main()
 simbora
+    trem_di_numeru opcao uai
+    opcao fica_assim_entao 2 uai
 
+    dependenu (opcao) simbora
+        du_casu 1 : simbora
+            oia_proce_ve("Escolheu um") uai
+            para_o_trem;
+        cabo
+        du_casu 2 : simbora
+            oia_proce_ve("Escolheu dois") ;
+            para_o_trem;
+        cabo
+        uai_so : simbora
+            oia_proce_ve("Nenhum dos dois, uai") uai
+            para_o_trem;
+        cabo
+    cabo
 cabo
 
 // *Testes de variáveis e impressões (descomente p testar)

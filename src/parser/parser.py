@@ -75,19 +75,24 @@ class Parser:
             PR_TREM_DI_NUMERU, PR_TREM_CUM_VIRGULA, PR_TREM_DISCRITA, PR_TREM_DISCOLHE, PR_TROSSO,
             PR_XOVE, PR_OIA_PROCE_VE, 
             PR_UAI_SE, PR_ENQUANTO, PR_RODA_ESSE_TREM, PR_DEPENDENU,
-            DEL_SIMBORA, PR_PARA_O_TREM, PR_TOCA_O_TREM, DEL_UAI
+            DEL_SIMBORA, PR_PARA_O_TREM, PR_TOCA_O_TREM, DEL_UAI, DEL_PONTO_VIRGULA,
+            IDENTIFICADOR, LIT_NUM_INT, LIT_NUM_HEX, LIT_NUM_OCT, LIT_NUM_FLOAT, LIT_STRING, LIT_CHAR, PR_EH, PR_NUM_EH
         ]
         
-        # Observação: <atrib> (expressões puras como 'x fica_assim_entao 5 uai') serão 
-        # tratadas aqui na Etapa 4.
-        
-        if atual in primeiros_de_stmt or atual == IDENTIFICADOR or atual in [LIT_NUM_INT, LIT_NUM_FLOAT, LIT_STRING, LIT_CHAR]:
+        if atual in primeiros_de_stmt:
             self.parse_stmt()
             self.parse_stmtList()
         elif atual == DEL_CABO:
-            return # Fim da lista de comandos
+            return
+
+    def consome_terminador(self):
+        """Consome obrigatoriamente um 'uai' ou um ';'."""
+        atual = self.token_atual()
+        # Verifica se o token atual é o código de 'uai' (502) ou ';' (509)
+        if atual[1] in [DEL_UAI, DEL_PONTO_VIRGULA]:
+            self.avanca()
         else:
-            self.disparar_erro_sintatico("Início de comando válido ou 'cabo'", self.token_atual())
+            self.disparar_erro_sintatico("'uai' ou ';'", atual)
 
     def parse_stmt(self):
         """ <stmt> -> <forStmt> | <ioStmt> | <whileStmt> | <atrib> 'uai' | <ifStmt> | <caseStmt> | <bloco> | ... """
@@ -110,16 +115,15 @@ class Parser:
             self.parse_bloco()
         elif atual == PR_PARA_O_TREM:
             self.consome(PR_PARA_O_TREM, "'para_o_trem'")
-            self.consome(DEL_UAI, "'uai'")
+            self.consome_terminador()
         elif atual == PR_TOCA_O_TREM:
             self.consome(PR_TOCA_O_TREM, "'toca_o_trem'")
-            self.consome(DEL_UAI, "'uai'")
-        elif atual == DEL_UAI: # Comando vazio
-            self.consome(DEL_UAI, "'uai'")
+            self.consome_terminador()
+        elif atual in [DEL_UAI, DEL_PONTO_VIRGULA]: # Comando vazio
+            self.consome_terminador()
         else:
-            # Temporário para a Etapa 4 (Expressões Isoladas)
             self.parse_atrib()
-            self.consome(DEL_UAI, "'uai'")
+            self.consome_terminador()
     
     # -------------------------------------------------------------------------
     # Declaração de Variáveis
@@ -129,7 +133,7 @@ class Parser:
         """ <declaration> -> <type> <identList> 'uai' ; """
         self.parse_type()
         self.parse_identList()
-        self.consome(DEL_UAI, "'uai'")
+        self.consome_terminador()
 
     def parse_type(self):
         """ <type> -> 'trem_di_numeru' | 'trem_cum_virgula' | 'trem_discrita' | 'trem_discolhe' | 'trosso' """
@@ -178,14 +182,14 @@ class Parser:
             self.consome(DEL_VIRGULA, "','")
             self.consome(IDENTIFICADOR, "Identificador")
             self.consome(DEL_FECHA_PAR, "')'")
-            self.consome(DEL_UAI, "'uai'")
+            self.consome_terminador()
             
         elif atual == PR_OIA_PROCE_VE: # Output/Print
             self.consome(PR_OIA_PROCE_VE, "'oia_proce_ve'")
             self.consome(DEL_ABRE_PAR, "'('")
             self.parse_outList()
             self.consome(DEL_FECHA_PAR, "')'")
-            self.consome(DEL_UAI, "'uai'")
+            self.consome_terminador()
 
     def parse_outList(self):
         """ <outList> -> <out> <restoOutList> """
@@ -211,8 +215,8 @@ class Parser:
         
         # Tudo que pode ser impresso/passado
         literais_validos = [
-            LIT_STRING, IDENTIFICADOR, LIT_NUM_INT, LIT_NUM_FLOAT, 
-            LIT_CHAR, PR_EH, PR_NUM_EH
+            LIT_STRING, IDENTIFICADOR, LIT_NUM_INT, LIT_NUM_HEX, 
+            LIT_NUM_OCT, LIT_NUM_FLOAT, LIT_CHAR, PR_EH, PR_NUM_EH
         ]
         
         if atual in literais_validos:
@@ -294,19 +298,18 @@ class Parser:
         self.parse_stmt()
 
     def parse_restoDosCasos(self):
-        """ <restoDosCasos> -> <doCaso><restoDosCasos> | 'default' ':' <stmt> | & """
+        """ <restoDosCasos> -> <doCaso><restoDosCasos> | 'uai_so' ':' <stmt> | & """
         atual = self.token_atual()[1]
         
         if atual == PR_DU_CASU:
             self.parse_doCaso()
             self.parse_restoDosCasos()
-            
-        # Atenção: O professor usou a string 'default' na gramática. 
-        # Como não criamos um PR_DEFAULT, vamos ler como um identificador com o texto "default"
-        elif atual == IDENTIFICADOR and self.token_atual()[0] == "default":
-            self.consome(IDENTIFICADOR, "'default'")
+        
+        elif atual == PR_UAI_SO:
+            self.consome(PR_UAI_SO, "'uai_so'")
             self.consome(DEL_DOIS_PONTOS, "':'")
             self.parse_stmt()
+
         else:
             return # Vazio / Epsilon
             
@@ -421,6 +424,7 @@ class Parser:
     def parse_restoMult(self):
         """ <restoMult> -> 'veiz' <uno> <restoMult> | 'sob' <uno> <restoMult> | '/' <uno> <restoMult> | '%' <uno> <restoMult> | & ; """
         atual = self.token_atual()[1]
+
         operadores_mult = {
             OP_VEIZ: "'veiz'",
             OP_SOB: "'sob'",

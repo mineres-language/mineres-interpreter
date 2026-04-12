@@ -4,6 +4,10 @@ import sys
 from lexer.lexer import Lexer, formata_tokens
 from parser.parser import Parser
 
+def clear_console():
+    print("\n" * 100)
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 def read_file(arquivo_entrada: str) -> str:
     try:
         with open(arquivo_entrada, "r", encoding="utf-8") as f:
@@ -33,8 +37,9 @@ def analise_sintatica(tokens: list):
         sys.exit(1)
 
 def main():
+    clear_console()
     print("-"*40)
-    print(" "*11 +  "MINERES INTERPRETER" + " "*11)
+    print(" "*11 +  "MINERES INTERPRETER")
     print("-"*40 + "\n")
     
     # Configuração de caminhos
@@ -61,7 +66,17 @@ def main():
     analise_sintatica(tokens)
 
 
+    print("\n" + "-"*40 + "\n")
+
     # (Próxima etapa)
+
+
+
+    # print("\n" + "-"*40 + "\n")
+
+    # -----------------------------------
+    # Fim
+    print(" "*6 + "-" * 10 + " FIM " + "-" * 10)
 
 if __name__ == "__main__":
     main()
