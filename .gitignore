@@ -1,3 +1,4 @@
 saida.c
 *.exe
 __pycache__/
+output/saida.uai
