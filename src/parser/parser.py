@@ -4,30 +4,23 @@ from lexer.tokens import *
 class Parser:
     def __init__(self, tokens: list):
         self.tokens = tokens
-        self.pos = 0  # Nosso "dedo" apontando para o token atual na lista
+        self.pos = 0 
         self.tamanho = len(tokens)
 
-    # -------------------------------------------------------------------------
-    # Helpers de Navegação e Controle
-    # -------------------------------------------------------------------------
-
     def token_atual(self):
-        """Retorna a tupla do token atual. Se a lista acabar, retorna um EOF fictício."""
         if self.pos < self.tamanho:
             return self.tokens[self.pos]
         
-        # Prevenção para não estourar erro de índice de lista (IndexError)
+        # prevenção para não estourar erro de índice de lista (IndexError)
         ultimo = self.tokens[-1] if self.tamanho > 0 else ("", "EOF", 1, 1)
         return ("EOF", "EOF", ultimo[2], ultimo[3])
 
     def avanca(self):
-        """Avança o ponteiro para o próximo token da lista."""
         if self.pos < self.tamanho:
             self.pos += 1
 
     def disparar_erro_sintatico(self, esperado: str, token_recebido: tuple):
-        """Panic Mode: Aborta a execução no primeiro erro sintático encontrado."""
-        lexema, codigo, linha, coluna = token_recebido
+        lexema, linha, coluna = token_recebido
         
         print("\n[ERRO SINTÁTICO]")
         print(f"Linha: {linha}, Coluna: {coluna}")
@@ -37,20 +30,12 @@ class Parser:
         sys.exit(1)
 
     def consome(self, codigo_esperado: int, nome_esperado_para_erro: str):
-        """
-        O Juiz: Verifica se o token atual é o que a gramática exige.
-        Se for, engole o token e avança. Se não for, mata o programa.
-        """
         atual = self.token_atual()
         
         if atual[1] == codigo_esperado:
             self.avanca()
         else:
             self.disparar_erro_sintatico(nome_esperado_para_erro, atual)
-
-    # -------------------------------------------------------------------------
-    # Regras da Gramática (Árvore de Decisão)
-    # -------------------------------------------------------------------------
 
     def parse_function(self):
         """ <function*> -> 'bora_cumpade' 'main' '(' ')' <bloco> ; """
@@ -70,7 +55,6 @@ class Parser:
         """ <stmtList> -> <stmt> <stmtList> | & ; """
         atual = self.token_atual()[1]
         
-        # Agora o FIRST engloba blocos, controles, quebras, IO e variáveis
         primeiros_de_stmt = [
             PR_TREM_DI_NUMERU, PR_TREM_CUM_VIRGULA, PR_TREM_DISCRITA, PR_TREM_DISCOLHE, PR_TROSSO,
             PR_XOVE, PR_OIA_PROCE_VE, 
@@ -110,16 +94,12 @@ class Parser:
         elif atual == PR_TOCA_O_TREM:
             self.consome(PR_TOCA_O_TREM, "'toca_o_trem'")
             self.consome(DEL_UAI, "'uai'")
-        elif atual in [DEL_UAI, DEL_PONTO_VIRGULA]: # Comando vazio
+        elif atual in [DEL_UAI, DEL_PONTO_VIRGULA]:
             self.consome(DEL_UAI, "'uai'")
         else:
             self.parse_atrib()
             self.consome(DEL_UAI, "'uai'")
     
-    # -------------------------------------------------------------------------
-    # Declaração de Variáveis
-    # -------------------------------------------------------------------------
-
     def parse_declaration(self):
         """ <declaration> -> <type> <identList> 'uai' ; """
         self.parse_type()
@@ -155,12 +135,7 @@ class Parser:
             self.consome(IDENTIFICADOR, "Identificador")
             self.parse_restoIdentList()
         else:
-            # Não tem vírgula? Então a lista acabou (Regra & / Lambda)
             return
-    
-    # -------------------------------------------------------------------------
-    # I/O (Prints e Inputs)
-    # -------------------------------------------------------------------------
     
     def parse_ioStmt(self):
         """ <ioStmt> -> 'xove' '(' <type> ',' 'IDENT' ')' 'uai' | 'oia_proce_ve' '(' <outList> ')' 'uai' """
@@ -175,7 +150,7 @@ class Parser:
             self.consome(DEL_FECHA_PAR, "')'")
             self.consome(DEL_UAI, "'uai'")
             
-        elif atual == PR_OIA_PROCE_VE: # Output/Print
+        elif atual == PR_OIA_PROCE_VE: 
             self.consome(PR_OIA_PROCE_VE, "'oia_proce_ve'")
             self.consome(DEL_ABRE_PAR, "'('")
             self.parse_outList()
@@ -198,27 +173,21 @@ class Parser:
             self.parse_out()
             self.parse_restoOutList()
         else:
-            return # Vazio / Epsilon
+            return 
 
     def parse_fatorZin(self):
         """ <fatorZin> -> 'STR' | 'IDENT' | 'NUMint' | 'NUMfloat' | 'valorBooleano' | 'valorChar' """
         atual = self.token_atual()[1]
         
-        # Tudo que pode ser impresso/passado
         literais_validos = [
             LIT_STRING, IDENTIFICADOR, LIT_NUM_INT, LIT_NUM_HEX, 
             LIT_NUM_OCT, LIT_NUM_FLOAT, LIT_CHAR, PR_EH, PR_NUM_EH
         ]
         
         if atual in literais_validos:
-            # Consome o que quer que seja e avança
             self.consome(atual, "Valor Literal ou Variável")
         else:
             self.disparar_erro_sintatico("Valor para impressão", self.token_atual())
-
-    # -------------------------------------------------------------------------
-    # Estruturas de Controle
-    # -------------------------------------------------------------------------
 
     def parse_ifStmt(self):
         """ <ifStmt> -> 'uai_se' '(' <expr> ')' <stmt> <elsePart> ; """
@@ -235,7 +204,7 @@ class Parser:
             self.consome(PR_UAI_SENAO, "'uai_senao'")
             self.parse_stmt()
         else:
-            return # Vazio / Epsilon
+            return 
 
     def parse_whileStmt(self):
         """ <whileStmt> -> 'enquanto_tiver_trem' '(' <expr> ')' <stmt> ; """
@@ -260,7 +229,7 @@ class Parser:
     def parse_optExpr(self):
         """ <optExpr> -> <atrib> | & ; """
         atual = self.token_atual()[1]
-        # Se for um delimitador fechando ou separando, significa que a expressão é vazia
+
         if atual in [DEL_PONTO_VIRGULA, DEL_FECHA_PAR]:
             return
         else:
@@ -302,12 +271,8 @@ class Parser:
             self.parse_stmt()
 
         else:
-            return # Vazio / Epsilon
-            
-    # -------------------------------------------------------------------------
-    # Expressões Matemáticas e Lógicas
-    # -------------------------------------------------------------------------
-
+            return 
+        
     def parse_expr(self):
         """ <expr> -> <atrib> ; """
         self.parse_atrib()
@@ -387,7 +352,6 @@ class Parser:
         if atual in operadores_relacionais:
             self.consome(atual, operadores_relacionais[atual])
             self.parse_add()
-            # Não tem recursão aqui porque não se encadeia a < b < c na mesma regra
         else:
             return
 
@@ -450,19 +414,13 @@ class Parser:
         else:
             self.parse_fatorZin()
 
-    # -------------------------------------------------------------------------
-    # Ponto de Entrada
-    # -------------------------------------------------------------------------
-
     def iniciar(self):
         if self.tamanho == 0:
             print("Nenhum token para analisar.")
             return
 
-        # 1. A gramática diz que todo programa começa obrigatoriamente pela regra function
         self.parse_function()
 
-        # 2. Se o programa acabou, não deve sobrar nenhum token "perdido" lá fora
         if self.pos < self.tamanho:
             self.disparar_erro_sintatico("Fim do arquivo (Nenhum código fora da main)", self.token_atual())
 
