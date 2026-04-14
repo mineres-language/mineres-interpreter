@@ -20,7 +20,7 @@ class Parser:
             self.pos += 1
 
     def disparar_erro_sintatico(self, esperado: str, token_recebido: tuple):
-        lexema, linha, coluna = token_recebido
+        lexema, codigo, linha, coluna = token_recebido
         
         print("\n[ERRO SINTÁTICO]")
         print(f"Linha: {linha}, Coluna: {coluna}")
