@@ -16,7 +16,9 @@ Para entender os detalhes de implementação de cada componente, acesse as docum
     * Responsável pela tokenização e reconhecimento de padrões via AFD.
 2.  **[Core: Analisador Sintático (Parser)](./src/parser/README.md)**
     * Responsável pela validação gramatical e hierarquia de expressões.
-3.  **[Próxima Fase: Em construção ]**
+3.  **[Infra: Recursos e Suíte de Testes (Data)](./data/)**
+    * Gerenciamento da gramática formal (.gmr) e arquivos de entrada/saída (.uai).
+4.  **[Próxima Fase: Em construção ]**
     * Em construção.
 
 ---
