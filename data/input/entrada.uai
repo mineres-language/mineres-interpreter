@@ -3,21 +3,29 @@ bora_cumpade main()
 simbora
     trem_di_numeru opcao uai
     opcao fica_assim_entao 2 uai
+    trem_di_numeru i uai
+    i fica_assim_entao 10 uai
 
     dependenu (opcao) simbora
         du_casu 1 : simbora
             oia_proce_ve("Escolheu um") uai
-            para_o_trem;
+            para_o_trem uai
         cabo
         du_casu 2 : simbora
-            oia_proce_ve("Escolheu dois") ;
-            para_o_trem;
+            oia_proce_ve("Escolheu dois") uai
+            para_o_trem uai
         cabo
         uai_so : simbora
             oia_proce_ve("Nenhum dos dois, uai") uai
-            para_o_trem;
+            para_o_trem uai
         cabo
     cabo
+
+    roda_esse_trem (i fica_assim_entao 10; i < 20; i fica_assim_entao i + 1) 
+    simbora
+        oia_proce_ve(i) uai
+    cabo
+    
 cabo
 
 // *Testes de variáveis e impressões (descomente p testar)
