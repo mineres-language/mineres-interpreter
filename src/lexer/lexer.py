@@ -11,6 +11,10 @@ class Lexer:
         self.tokens  = []
         self.erro    = None  # (mensagem, linha, coluna)
 
+    # -------------------------------------------------------------------------
+    # Helpers de navegação
+    # -------------------------------------------------------------------------
+
     def disparar_erro_fatal(self, tipo_erro: str, lexema: str, lin: int, col: int):
         print(f"\n[ERRO FATAL LÉXICO]")
         print(f'("{lexema}", "{tipo_erro}", {lin}, {col})')
@@ -43,6 +47,10 @@ class Lexer:
             return '\0'
         return self.fonte[idx]
 
+    # -------------------------------------------------------------------------
+    # Helpers de classificação
+    # -------------------------------------------------------------------------
+
     def eh_letra(self, c: str) -> bool:
         return c.isalpha()
 
@@ -57,6 +65,10 @@ class Lexer:
 
     def eh_corpo_ident(self, c: str) -> bool:
         return c.isalnum() or c == '_'
+
+    # -------------------------------------------------------------------------
+    # Pular espaços e comentários
+    # -------------------------------------------------------------------------
 
     def pula_espacos(self):
         while self.pos < self.tamanho and self.atual().isspace():
@@ -86,6 +98,10 @@ class Lexer:
             self.avanca()
 
         return False  # EOF sem fechar
+
+    # -------------------------------------------------------------------------
+    # Reconhecedores de token
+    # -------------------------------------------------------------------------
 
     def le_identificador_ou_reservada(self):
         inicio = self.pos

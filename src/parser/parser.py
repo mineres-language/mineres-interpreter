@@ -7,6 +7,10 @@ class Parser:
         self.pos = 0 
         self.tamanho = len(tokens)
 
+    # -------------------------------------------------------------------------
+    # Helpers de Navegação e Controle
+    # -------------------------------------------------------------------------
+
     def token_atual(self):
         if self.pos < self.tamanho:
             return self.tokens[self.pos]
@@ -30,12 +34,18 @@ class Parser:
         sys.exit(1)
 
     def consome(self, codigo_esperado: int, nome_esperado_para_erro: str):
+        # verifica se o token atual é o que a gramática exige
+        
         atual = self.token_atual()
         
         if atual[1] == codigo_esperado:
             self.avanca()
         else:
             self.disparar_erro_sintatico(nome_esperado_para_erro, atual)
+
+    # -------------------------------------------------------------------------
+    # Regras da Gramática (Árvore de Decisão)
+    # -------------------------------------------------------------------------
 
     def parse_function(self):
         """ <function*> -> 'bora_cumpade' 'main' '(' ')' <bloco> ; """
@@ -99,7 +109,11 @@ class Parser:
         else:
             self.parse_atrib()
             self.consome(DEL_UAI, "'uai'")
-    
+
+    # -------------------------------------------------------------------------
+    # Declaração de Variáveis
+    # -------------------------------------------------------------------------
+
     def parse_declaration(self):
         """ <declaration> -> <type> <identList> 'uai' ; """
         self.parse_type()
@@ -137,6 +151,10 @@ class Parser:
         else:
             return
     
+    # -------------------------------------------------------------------------
+    # I/O (Prints e Inputs)
+    # -------------------------------------------------------------------------
+
     def parse_ioStmt(self):
         """ <ioStmt> -> 'xove' '(' <type> ',' 'IDENT' ')' 'uai' | 'oia_proce_ve' '(' <outList> ')' 'uai' """
         atual = self.token_atual()[1]
@@ -189,6 +207,10 @@ class Parser:
         else:
             self.disparar_erro_sintatico("Valor para impressão", self.token_atual())
 
+    # -------------------------------------------------------------------------
+    # Estruturas de Controle
+    # -------------------------------------------------------------------------
+    
     def parse_ifStmt(self):
         """ <ifStmt> -> 'uai_se' '(' <expr> ')' <stmt> <elsePart> ; """
         self.consome(PR_UAI_SE, "'uai_se'")
@@ -273,6 +295,10 @@ class Parser:
         else:
             return 
         
+    # -------------------------------------------------------------------------
+    # Expressões Matemáticas e Lógicas
+    # -------------------------------------------------------------------------
+
     def parse_expr(self):
         """ <expr> -> <atrib> ; """
         self.parse_atrib()

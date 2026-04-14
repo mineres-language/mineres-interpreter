@@ -54,24 +54,19 @@ def main():
 
     # ----------------------------------- 
     # Análise Léxica
-    print(" "*7 + "-" * 5 + " ANÁLISE LEXER " + "-" * 5)
+    print(" "*7 + "-" * 5 + " ANÁLISE LEXER (LÉXICA) " + "-" * 5)
     tokens = analise_lexica(fonte, arquivo_saida)
-    
-
     print("\n" + "-"*40 + "\n")
 
     # -----------------------------------
     # Análise Sintática
-    print(" "*2 + "-" * 5 + " ANÁLISE PARSER (SINTÁTICA) " + "-" * 5)
+    print(" "*7 + "-" * 5 + " ANÁLISE PARSER (SINTÁTICA) " + "-" * 5)
     analise_sintatica(tokens)
-
-
     print("\n" + "-"*40 + "\n")
 
+    # -----------------------------------
     # (Próxima etapa)
-
-
-
+    # print(" "*2 + "-" * 5 + " PRÓXIMA ETAPA " + "-" * 5)
     # print("\n" + "-"*40 + "\n")
 
     # -----------------------------------
