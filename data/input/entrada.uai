@@ -1,25 +1,23 @@
-causo TESTE 1 fim_do_causo
+// TESTE 1
+// bora_cumpade main()
+// simbora
+//     causo comentario simples num causa nada fim_do_causo
 
-bora_cumpade main()
-simbora
-    causo comentario simples num causa nada fim_do_causo
-
-    trem_di_numeru x uai
+//     trem_di_numeru x uai
     
-    causo
-        comentario
-        em varias
-        linhas
-    fim_do_causo
+//     causo
+//         comentario
+//         em varias
+//         linhas
+//     fim_do_causo
     
-    causo aqui tem fim_do_causografia que nao deve fechar fim_do_causo
+//     causo aqui tem fim_do_causografia que nao deve fechar fim_do_causo
     
-    oia_proce_ve(x) uai
-cabo
+//     oia_proce_ve(x) uai
+// cabo
 
 
-causo TESTE 2 fim_do_causo
-
+// TESTE 2
 causo
 bora_cumpade main()
 simbora
