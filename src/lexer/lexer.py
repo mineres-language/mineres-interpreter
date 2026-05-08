@@ -85,19 +85,39 @@ class Lexer:
         for _ in range(5):
             self.avanca()
 
-        while self.pos < self.tamanho:
-            # procura 'fim_do_causo'
-            if (
-                self.pos + 12 <= self.tamanho and
-                self.fonte.startswith('fim_do_causo', self.pos) and
-                not self.eh_corpo_ident(self.peek(12))
-            ):
-                for _ in range(12):
-                    self.avanca()
-                return True
-            self.avanca()
+        MARCADOR = 'fim_do_causo'
+        LEN_MARCADOR = len(MARCADOR)
 
-        return False  # EOF sem fechar
+        busca_a_partir = self.pos
+        while True:
+            idx = self.fonte.find(MARCADOR, busca_a_partir)
+            if idx == -1:
+                # comentário não fechado: consome até EOF para reportar EOF correto
+                self._pular_para(self.tamanho)
+                return False
+
+            #boundary check: 'fim_do_causografia' não deve casar
+            depois = idx + LEN_MARCADOR
+            if depois < self.tamanho and self.eh_corpo_ident(self.fonte[depois]):
+                busca_a_partir = idx + 1 # falso positivo, continua procurando
+                continue
+                
+            self._pular_para(idx + LEN_MARCADOR)
+            return True
+
+    def _pular_para(self, destino: int):
+        """Avança self.pos até `destino`, atualizando linha/coluna em O(1) via count"""
+        if destino <= self.pos:
+            return
+        trecho = self.fonte[self.pos:destino]
+        quebras = trecho.count('\n')
+        if quebras > 0:
+            self.linha += quebras
+            ultima = trecho.rfind('\n')
+            self.coluna = len(trecho) - ultima
+        else:
+            self.coluna += len(trecho)
+        self.pos = destino
 
     # -------------------------------------------------------------------------
     # Reconhecedores de token
