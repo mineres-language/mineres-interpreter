@@ -132,3 +132,38 @@ PALAVRAS_RESERVADAS = {
     "xove":               PR_XOVE,
     "oia_proce_ve":       PR_OIA_PROCE_VE,    
 }
+
+# =============================================================================
+# DICIONÁRIO REVERSO (Para mensagens de erro automáticas no Parser)
+# =============================================================================
+
+NOMES_TOKENS = {
+    IDENTIFICADOR: "Identificador (nome de variável/função)",
+    LIT_NUM_INT: "Número Inteiro",
+    LIT_NUM_HEX: "Número Hexadecimal",
+    LIT_NUM_OCT: "Número Octal",
+    LIT_NUM_FLOAT: "Número Decimal (Float)",
+    LIT_STRING: "Texto (String)",
+    LIT_CHAR: "Caractere (Char)",
+    
+    # Delimitadores e Operadores extras que não são palavras
+    DEL_ABRE_PAR: "'('",
+    DEL_FECHA_PAR: "')'",
+    DEL_VIRGULA: "','",
+    DEL_ABRE_CHAVE: "'{'",
+    DEL_FECHA_CHAVE: "'}'",
+    DEL_PONTO: "'.'",
+    DEL_PONTO_VIRGULA: "';'",
+    DEL_DOIS_PONTOS: "':'",
+    OP_MENOR_IGUAL: "'<='",
+    OP_MENOR: "'<'",
+    OP_MAIOR_IGUAL: "'>='",
+    OP_MAIOR: "'>'",
+    OP_MAIS: "'+'",
+    OP_MENOS: "'-'",
+    OP_MODULO: "'%'",
+    OP_DIVISAO_INT: "'/'",
+}
+
+for lexema, codigo in PALAVRAS_RESERVADAS.items():
+    NOMES_TOKENS[codigo] = f"'{lexema}'"
