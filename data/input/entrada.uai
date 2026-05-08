@@ -1,80 +1,29 @@
-// *Testes de estrutura básica do programa 
+causo TESTE 1 fim_do_causo
+
 bora_cumpade main()
 simbora
-    trem_di_numeru opcao uai
-    opcao fica_assim_entao 2 uai
-    trem_di_numeru i uai
-    i fica_assim_entao 10 uai
+    causo comentario simples num causa nada fim_do_causo
 
-    dependenu (opcao) simbora
-        du_casu 1 : simbora
-            oia_proce_ve("Escolheu um") uai
-            para_o_trem uai
-        cabo
-        du_casu 2 : simbora
-            oia_proce_ve("Escolheu dois") uai
-            para_o_trem uai
-        cabo
-        uai_so : simbora
-            oia_proce_ve("Nenhum dos dois, uai") uai
-            para_o_trem uai
-        cabo
-    cabo
-
-    roda_esse_trem (i fica_assim_entao 10; i < 20; i fica_assim_entao i + 1) 
-    simbora
-        oia_proce_ve(i) uai
-    cabo
+    trem_di_numeru x uai
     
+    causo
+        comentario
+        em varias
+        linhas
+    fim_do_causo
+    
+    causo aqui tem fim_do_causografia que nao deve fechar fim_do_causo
+    
+    oia_proce_ve(x) uai
 cabo
 
-// *Testes de variáveis e impressões (descomente p testar)
-// bora_cumpade main()
-// simbora
-//     // Declarando variaveis (comentários devem ser ignorados lindamente pelo lexer)
-//     trem_di_numeru idade, ano_nascimento uai
-//     trem_discrita nome uai
 
-//     // Lendo do teclado
-//     xove(trem_di_numeru, idade) uai
-    
-//     // Imprimindo valores
-//     oia_proce_ve("Ola mundo", nome, 2026, eh) uai
-// cabo
+causo TESTE 2 fim_do_causo
 
-// *Testes de estruturas de controle (descomente p testar)
-// bora_cumpade main()
-// simbora
-//     // Teste do SE/SENA0
-//     uai_se ( eh ) simbora
-//         oia_proce_ve("Entrou no if") uai
-//     cabo
-//     uai_senao simbora
-//         oia_proce_ve("Entrou no else") uai
-//     cabo
-
-//     // Teste do WHILE e FOR (Note que os blocos podem ser aninhados!)
-//     enquanto_tiver_trem ( num_eh ) simbora
-//         roda_esse_trem ( 1 ; 2 ; 3 ) 
-//             para_o_trem uai
-//     cabo
-
-//     // Teste do SWITCH/CASE
-//     dependenu ( variavel ) simbora
-//         du_casu 1 : oia_proce_ve("um") uai
-//         du_casu 2 : oia_proce_ve("dois") uai
-//         default : oia_proce_ve("outro") uai
-//     cabo
-// cabo
-
-// *Testes de expressões matemáticas e lógicas (descomente p testar)
-// bora_cumpade main()
-// simbora
-//     // Matemática pesada com precedência
-//     x fica_assim_entao -5 + (2 veiz 3) sob 4 uai
-    
-//     // Condições complexas
-//     uai_se ( a mema_coisa b tamem vam_marca c ) simbora
-//         oia_proce_ve(x) uai
-//     cabo
-// cabo
+causo
+bora_cumpade main()
+simbora
+    causo este nunca fecha
+    trem_di_numeru x uai
+cabo
+fim_do_causo
