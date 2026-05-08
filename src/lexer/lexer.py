@@ -85,19 +85,27 @@ class Lexer:
         for _ in range(5):
             self.avanca()
 
-        while self.pos < self.tamanho:
-            # procura 'fim_do_causo'
-            if (
-                self.pos + 12 <= self.tamanho and
-                self.fonte.startswith('fim_do_causo', self.pos) and
-                not self.eh_corpo_ident(self.peek(12))
-            ):
-                for _ in range(12):
+        # otimização: Delega a busca pesada para o C do interpretador Python
+        pos_fim = self.fonte.find('fim_do_causo', self.pos)
+        
+        while pos_fim != -1:
+            idx_after = pos_fim + 12
+            # garante que não é um falso positivo colado em letras (ex: 'fim_do_causos')
+            if idx_after >= self.tamanho or not self.eh_corpo_ident(self.fonte[idx_after]):
+                # se achou, avança o ponteiro principal ('self.pos') de forma segura
+                # para garantir que as linhas e colunas sejam atualizadas corretamente
+                while self.pos < idx_after:
                     self.avanca()
                 return True
-            self.avanca()
+            
+            # se for falso positivo, continua a busca a partir da próxima letra
+            pos_fim = self.fonte.find('fim_do_causo', pos_fim + 1)
 
-        return False  # EOF sem fechar
+        # se chegou aqui, não encontrou o fechamento. Avança tudo para engatilhar o EOF.
+        while self.pos < self.tamanho:
+            self.avanca()
+            
+        return False
 
     # -------------------------------------------------------------------------
     # Reconhecedores de token
@@ -158,18 +166,26 @@ class Lexer:
 
         if self.pos < self.tamanho and self.atual() == '.':
             # float: [0-9]+.[0-9]*
-            self.avanca()  # consome o ponto
+            self.avanca()  # consome o primeiro ponto
 
-            if not self.eh_digito(self.atual()):
+            if not self.eh_digito(self.atual()) and self.atual() != '.':
                 lexema_formatado = self.fonte[inicio:self.pos] + '0'
                 return(lexema_formatado, LIT_NUM_FLOAT, lin, col)
 
+            # consome as casas decimais
             while self.pos < self.tamanho and self.eh_digito(self.atual()):
                 self.avanca()
+                
+            # verifica se tem lixo como múltiplos pontos (ex: 12.12.12)
+            if self.pos < self.tamanho and self.atual() == '.':
+                while self.pos < self.tamanho and (self.eh_digito(self.atual()) or self.atual() == '.'):
+                    self.avanca()
+                self.disparar_erro_fatal("Número float mal formado (múltiplos pontos)", self.fonte[inicio:self.pos], lin, col)
+
             return (self.fonte[inicio:self.pos], LIT_NUM_FLOAT, lin, col)
 
         return (self.fonte[inicio:self.pos], LIT_NUM_INT, lin, col)
-
+    
     def le_float_por_ponto(self):
         inicio = self.pos
         lin    = self.linha
@@ -337,70 +353,46 @@ class Lexer:
                     self.tokens.append(("<=", OP_MENOR_IGUAL, lin, col))
                 else:
                     self.tokens.append(("<", OP_MENOR, lin, col))
-                continue
-
-            if c == '>':
+            elif c == '>':
                 self.avanca()
                 if self.atual() == '=':
                     self.avanca()
                     self.tokens.append((">=", OP_MAIOR_IGUAL, lin, col))
                 else:
                     self.tokens.append((">", OP_MAIOR, lin, col))
-                continue
-
-            if c == '+':
+            elif c == '+':
                 self.avanca()
                 self.tokens.append(("+", OP_MAIS, lin, col))
-                continue
-
-            if c == '-':
+            elif c == '-':
                 self.avanca()
                 self.tokens.append(("-", OP_MENOS, lin, col))
-                continue
-
-            if c == '%':
+            elif c == '%':
                 self.avanca()
                 self.tokens.append(("%", OP_MODULO, lin, col))
-                continue
-
-            if c == '(':
+            elif c == '(':
                 self.avanca()
                 self.tokens.append(("(", DEL_ABRE_PAR, lin, col))
-                continue
-
-            if c == ')':
+            elif c == ')':
                 self.avanca()
                 self.tokens.append((")", DEL_FECHA_PAR, lin, col))
-                continue
-
-            if c == ',':
+            elif c == ',':
                 self.avanca()
                 self.tokens.append((",", DEL_VIRGULA, lin, col))
-                continue
-
-            if c == '{':
+            elif c == '{':
                 self.avanca()
                 self.tokens.append(("{", DEL_ABRE_CHAVE, lin, col))
-                continue
-
-            if c == '}':
+            elif c == '}':
                 self.avanca()
                 self.tokens.append(("}", DEL_FECHA_CHAVE, lin, col))
-                continue
-
-            if c == ';':
+            elif c == ';':
                 self.avanca()
                 self.tokens.append((";", DEL_PONTO_VIRGULA, lin, col))
-                continue
-                
-            if c == ':':
+            elif c == ':':
                 self.avanca()
                 self.tokens.append((":", DEL_DOIS_PONTOS, lin, col))
-                continue
-
-            # símbolo desconhecido
-            self.avanca()
-            self.disparar_erro_fatal("Símbolo desconhecido", c, lin, col)
+            else:
+                self.avanca()
+                self.disparar_erro_fatal("Símbolo desconhecido", c, lin, col)
 
         return True
     
