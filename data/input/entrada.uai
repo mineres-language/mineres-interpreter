@@ -26,3 +26,152 @@ simbora
         oia_proce_ve(a) uai
     cabo
 cabo
+
+// Q1: Expressão com parênteses (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, c, d uai
+//     d fica_assim_entao (a + b) veiz c uai
+// cabo
+
+// Q2: Condicional simples (if) (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, c uai
+//     uai_se (a > b) c fica_assim_entao a uai
+// cabo
+
+// Q3: Positivo, negativo ou zero (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru n uai
+    
+//     xove(trem_di_numeru, n) uai
+    
+//     uai_se (n > 0)
+//         oia_proce_ve("positivo") uai
+//     uai_senao uai_se (n mema_coisa 0)
+//         oia_proce_ve("neutro") uai
+//     uai_senao
+//         oia_proce_ve("negativo") uai
+// cabo
+
+// Q4: Encadeamento de expressões lógicas (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, c, d, x uai
+//     uai_se (a > b tamem c < d) x fica_assim_entao 1 uai
+// cabo
+
+// Q6: Atribuição com múltiplas operações (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru x, a, b, c, d uai
+//     x fica_assim_entao (a + b) / (c - d) veiz 32 + 11 uai
+// cabo
+
+// Q7: Laço while simples (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru i uai
+//     enquanto_tiver_trem (i < 10) i fica_assim_entao i + 1 uai
+// cabo
+
+// Q8: Laço for com (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru i, sum uai
+//     sum fica_assim_entao 0 uai
+    
+//     roda_esse_trem (i fica_assim_entao 0 ; i <= 4 ; i fica_assim_entao i + 1)
+//         sum fica_assim_entao sum + i uai
+// cabo
+
+// Q9: If aninhado simples (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, c, d, x uai
+    
+//     uai_se (a > b)
+//         uai_se (c mema_coisa d)
+//             x fica_assim_entao 1 uai
+// cabo
+
+// Q10: Expressão booleana composta em laço (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, x, y uai
+    
+//     enquanto_tiver_trem (a < b tamem x neh_nada y)
+//         a fica_assim_entao a + 1 uai
+// cabo
+
+// Q11: If-else aninhado com múltiplas ações (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, c, d, x uai
+    
+//     uai_se (a < b)
+//     simbora
+//         uai_se (c > d)
+//             x fica_assim_entao 1 uai
+//         uai_senao
+//             x fica_assim_entao 2 uai
+//     cabo
+//     uai_senao
+//         x fica_assim_entao 3 uai
+// cabo
+
+// Q12: Laço while com continue e break (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru i, j, sum uai
+//     sum fica_assim_entao 0 uai
+    
+//     enquanto_tiver_trem (i < 10)
+//     simbora
+//         uai_se (i mema_coisa 5)
+//             i fica_assim_entao i + 1 uai
+//         uai_senao uai_se (i mema_coisa 8)
+//         simbora
+//             i fica_assim_entao 10 uai
+//             toca_o_trem uai
+            
+//             roda_esse_trem (j fica_assim_entao 2 ; j <= 5 ; j fica_assim_entao j + 1)
+//             simbora
+//                 para_o_trem uai
+//                 toca_o_trem uai
+//             cabo
+//         cabo
+//         uai_senao
+//         simbora
+//             sum fica_assim_entao sum + i uai
+//             i fica_assim_entao i + 1 uai
+//             para_o_trem uai
+//         cabo
+//     cabo
+// cabo
+
+// Q13: Laços aninhados com operação composta (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru i, j, total uai
+//     total fica_assim_entao 0 uai
+    
+//     roda_esse_trem (i fica_assim_entao 0 ; i <= 2 ; i fica_assim_entao i + 1)
+//         roda_esse_trem (j fica_assim_entao 0 ; j <= 1 ; j fica_assim_entao j + 1)
+//             total fica_assim_entao total + (i veiz j) uai
+// cabo
+
+// Q14: Condicional com três ramos (Descomente p testar)
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, x uai
+    
+//     uai_se (a mema_coisa b)
+//         x fica_assim_entao 1 uai
+//     uai_senao uai_se (a > b)  // else if existe no mineres?
+//         x fica_assim_entao 2 uai
+//     uai_senao
+//         x fica_assim_entao 3 uai
+// cabo
