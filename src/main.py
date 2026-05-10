@@ -3,6 +3,7 @@ import os
 import sys
 from lexer.lexer import Lexer, formata_tokens
 from parser.parser import Parser
+from ir import formata_codigo
 
 def clear_console():
     print("\n" * 100)
@@ -28,13 +29,21 @@ def analise_lexica(fonte: str, arquivo_saida: str) -> list:
         print("  [LEXER] Falha na análise léxica.")
         sys.exit(1)
 
-def analise_sintatica(tokens: list):
+def analise_sintatica(tokens: list) -> list:
     parser = Parser(tokens)
-    if parser.iniciar():
-        print("  [PARSER] Análise sintática concluída com sucesso!")
-    else:
-        print("  [PARSER] Falha na análise sintática.")
-        sys.exit(1)
+    codigo_ir = parser.iniciar()
+    print("  [PARSER] Análise sintática concluída com sucesso!")
+    return codigo_ir
+
+def gera_ir(codigo_ir: list, arquivo_saida: str):
+    if not codigo_ir:
+        print("  [IR] Nenhum código intermediário a gerar.")
+        return
+
+    os.makedirs(os.path.dirname(arquivo_saida), exist_ok=True)
+    with open(arquivo_saida, "w", encoding="utf-8") as f:
+        f.write(formata_codigo(codigo_ir))
+    print(f"  [IR] Sucesso! {len(codigo_ir)} tuplas geradas, salvas em {arquivo_saida}.")
 
 def main():
     clear_console()
@@ -43,11 +52,13 @@ def main():
     print("-"*40 + "\n")
     
     # Configuração de caminhos
-    arquivo_entrada = "data/input/entrada.uai"
-    arquivo_saida   = "data/output/saida.uai"
+    arquivo_entrada     = "data/input/entrada.uai"
+    arquivo_saida       = "data/output/saida.uai"
+    arquivo_saida_ir    = "data/output/saida_ir.uai"
 
     print(f"  Arquivo de entrada: {arquivo_entrada}")
-    print(f"  Arquivo de saída: {arquivo_saida}\n")
+    print(f"  Saída léxica      : {arquivo_saida}")
+    print(f"  Saída IR          : {arquivo_saida_ir}\n")
 
     # Leitura do arquivo
     fonte = read_file(arquivo_entrada)
@@ -61,13 +72,14 @@ def main():
     # -----------------------------------
     # Análise Sintática
     print(" "*7 + "-" * 5 + " ANÁLISE SINTÁTICA (PARSER) " + "-" * 5)
-    analise_sintatica(tokens)
+    codigo_ir = analise_sintatica(tokens)
     print("\n" + "-"*40 + "\n")
 
     # -----------------------------------
-    # (Próxima etapa)
-    # print(" "*2 + "-" * 5 + " PRÓXIMA ETAPA " + "-" * 5)
-    # print("\n" + "-"*40 + "\n")
+    # Geração de Código Intermediário
+    print(" "*2 + "-" * 5 + " GERAÇÃO DE CÓDIGO INTERMEDIÁRIO " + "-" * 5)
+    gera_ir(codigo_ir, arquivo_saida_ir)
+    print("\n" + "-"*40 + "\n")
 
     # -----------------------------------
     # Fim

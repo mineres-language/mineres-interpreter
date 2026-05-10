@@ -18,8 +18,8 @@ Para entender os detalhes de implementação de cada componente, acesse as docum
     * Responsável pela validação gramatical e hierarquia de expressões.
 3.  **[Infra: Recursos e Suíte de Testes (Data)](./docs/data.md)**
     * Gerenciamento da gramática formal (.gmr) e arquivos de entrada/saída (.uai).
-4.  **[Próxima Fase: Em construção ]**
-    * Em construção.
+4.  **[Core: Gerador de Código Intermediário (IR)](./docs/ir.md)**
+    * Responsável pela geração de tuplas de baixo nível e análise semântica.
 
 ---
 
@@ -34,12 +34,18 @@ mineres-interpreter/
 │   │   ├── entrada.uai
 │   │   └── teste_1.uai...
 │   └── output/               # Resultados do processamento
-│       └── saida.uai
+│       ├── saida.uai         # Dump da análise léxica (tokens)
+│       └── saida_ir.uai      # Código intermediário gerado (tuplas)
 ├── docs/                     # Documentação modularizada
 │   ├── data.md
+│   ├── ir.md
 │   ├── lexer.md
 │   └── parser.md
 ├── src/
+│   ├── ir/                   # Gerador de Código Intermediário
+│   │   ├── geradores.py
+│   │   ├── tabela_simbolos.py
+│   │   └── formatador.py
 │   ├── lexer/                # Analisador Léxico
 │   │   ├── lexer.py
 │   │   ├── tokens.py
