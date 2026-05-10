@@ -12,11 +12,11 @@ O software foi projetado seguindo um modelo de **pipeline modular**, onde cada f
 
 Para entender os detalhes de implementação de cada componente, acesse as documentações específicas:
 
-1.  **[Core: Analisador Léxico (Lexer)](./src/lexer/README.md)**
+1.  **[Core: Analisador Léxico (Lexer)](./docs/lexer.md)**
     * Responsável pela tokenização e reconhecimento de padrões via AFD.
-2.  **[Core: Analisador Sintático (Parser)](./src/parser/README.md)**
+2.  **[Core: Analisador Sintático (Parser)](./docs/parser.md)**
     * Responsável pela validação gramatical e hierarquia de expressões.
-3.  **[Infra: Recursos e Suíte de Testes (Data)](./data/)**
+3.  **[Infra: Recursos e Suíte de Testes (Data)](./docs/data.md)**
     * Gerenciamento da gramática formal (.gmr) e arquivos de entrada/saída (.uai).
 4.  **[Próxima Fase: Em construção ]**
     * Em construção.
@@ -35,6 +35,10 @@ mineres-interpreter/
 │   │   └── teste_1.uai...
 │   └── output/               # Resultados do processamento
 │       └── saida.uai
+├── docs/                     # Documentação modularizada
+│   ├── data.md
+│   ├── lexer.md
+│   └── parser.md
 ├── src/
 │   ├── lexer/                # Analisador Léxico
 │   │   ├── lexer.py
