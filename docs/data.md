@@ -34,4 +34,4 @@ Para realizar novos testes no interpretador:
 
 ---
 
-[⬅ Voltar para a Documentação Principal](../README.md)
+[Voltar para a Documentação Principal](../README.md)

@@ -162,4 +162,4 @@ cabo
 
 ---
 
-[⬅ Voltar para a Documentação Principal](../README.md)
+[Voltar para a Documentação Principal](../README.md)
