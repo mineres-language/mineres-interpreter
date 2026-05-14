@@ -1,29 +1,21 @@
 bora_cumpade main()
 simbora
-    trem_di_numeru a, b, c uai
-    trem_cum_virgula media uai
-    trem_discrita nome uai
+    trem_di_numeru opcao uai
+    opcao fica_assim_entao 2 uai
 
-    a fica_assim_entao 10 uai
-    b fica_assim_entao 20 uai
-    c fica_assim_entao a + b veiz 2 uai
-
-    media fica_assim_entao a + b sob 2 uai
-
-    oia_proce_ve("Resultado: ", c) uai
-
-    uai_se (a < b) simbora
-        oia_proce_ve("a eh menor que b") uai
-    cabo uai_senao simbora
-        oia_proce_ve("a nao eh menor que b") uai
-    cabo
-
-    enquanto_tiver_trem (a < 15) simbora
-        a fica_assim_entao a + 1 uai
-    cabo
-
-    roda_esse_trem (a fica_assim_entao 0; a < 5; a fica_assim_entao a + 1) simbora
-        oia_proce_ve(a) uai
+    dependenu (opcao) simbora
+        du_casu 1 : simbora
+            oia_proce_ve("Escolheu um") uai
+        cabo
+        du_casu 2 : simbora
+            oia_proce_ve("Escolheu dois") uai
+        cabo
+        du_casu 3 : simbora
+            oia_proce_ve("Escolheu tres") uai
+        cabo
+        uai_so : simbora
+            oia_proce_ve("Nenhum dos dois, uai") uai
+        cabo
     cabo
 cabo
 
