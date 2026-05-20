@@ -15,7 +15,7 @@ class Interpretador:
 
     def disparar_erro(self, mensagem: str):
         """ Interrompe a execução exibindo um erro semântico amigável. """
-        print(f"\n[ERRO DE EXECUÇÃO] Falha na instrução {self.ip - 1}")
+        print(f"\n[ERRO INTERPRETADOR]\nFalha na instrução {self.ip}")
         print(f"Detalhe: {mensagem}")
         print("Execução da Máquina Virtual abortada.\n")
         sys.exit(1)
