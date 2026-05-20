@@ -4,6 +4,7 @@ import sys
 from lexer.lexer import Lexer, formata_tokens
 from parser.parser import Parser
 from ir import formata_codigo
+from interpreter.interpreter import Interpretador
 
 def clear_console():
     print("\n" * 100)
@@ -79,6 +80,16 @@ def main():
     # Geração de Código Intermediário
     print(" "*2 + "-" * 5 + " GERAÇÃO DE CÓDIGO INTERMEDIÁRIO " + "-" * 5)
     gera_ir(codigo_ir, arquivo_saida_ir)
+    print("\n" + "-"*40 + "\n")
+
+    # -----------------------------------
+    # Execução (Máquina Virtual)
+    print(" "*10 + "-" * 5 + " INTERPRETADOR " + "-" * 5)
+    if codigo_ir:
+        vm = Interpretador(codigo_ir)
+        vm.executar()
+    else:
+        print("  [VM] Execução ignorada (código IR vazio).")
     print("\n" + "-"*40 + "\n")
 
     # -----------------------------------
