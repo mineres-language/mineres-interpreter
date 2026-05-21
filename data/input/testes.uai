@@ -1,22 +1,37 @@
-// // Q1: Expressão com parênteses (Descomente p testar)
+// // Q1: Expressão com parênteses
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru a, b, c, d uai
+//     a fica_assim_entao 10 uai
+//     b fica_assim_entao 0 uai
+//     c fica_assim_entao 10 uai
+//     d fica_assim_entao 0 uai
+
 //     d fica_assim_entao (a + b) veiz c uai
+//     oia_proce_ve("Q1 - Resultado de d: ") uai
+//     oia_proce_ve(d) uai
 // cabo
 
-// // Q2: Condicional simples (if) (Descomente p testar)
+// // Q2: Condicional simples (if)
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru a, b, c uai
+//     a fica_assim_entao 15 uai
+//     b fica_assim_entao 10 uai
+//     c fica_assim_entao 0 uai
+    
 //     uai_se (a > b) c fica_assim_entao a uai
+    
+//     oia_proce_ve("Q2 - Resultado de c: ") uai
+//     oia_proce_ve(c) uai
 // cabo
 
-// // Q3: Positivo, negativo ou zero (Descomente p testar)
+// // Q3: Positivo, negativo ou zero
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru n uai
     
+//     oia_proce_ve("Q3 - Digite um numero: ") uai
 //     xove(trem_di_numeru, n) uai
     
 //     uai_se (n > 0)
@@ -27,28 +42,50 @@
 //         oia_proce_ve("negativo") uai
 // cabo
 
-// // Q4: Encadeamento de expressões lógicas (Descomente p testar)
+// // Q4: Encadeamento de expressões lógicas
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru a, b, c, d, x uai
+//     a fica_assim_entao 5 uai
+//     b fica_assim_entao 2 uai
+//     c fica_assim_entao 3 uai
+//     d fica_assim_entao 10 uai
+//     x fica_assim_entao 0 uai
+    
 //     uai_se (a > b tamem c < d) x fica_assim_entao 1 uai
+    
+//     oia_proce_ve("Q4 - Resultado de x: ") uai
+//     oia_proce_ve(x) uai
 // cabo
 
-// // Q6: Atribuição com múltiplas operações (Descomente p testar)
+// // Q6: Atribuição com múltiplas operações
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru x, a, b, c, d uai
+//     a fica_assim_entao 5 uai
+//     b fica_assim_entao 5 uai
+//     c fica_assim_entao 4 uai
+//     d fica_assim_entao 2 uai
+    
 //     x fica_assim_entao (a + b) / (c - d) veiz 32 + 11 uai
+    
+//     oia_proce_ve("Q6 - Resultado de x: ") uai
+//     oia_proce_ve(x) uai
 // cabo
 
-// // Q7: Laço while simples (Descomente p testar)
+// // Q7: Laço while simples
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru i uai
+//     i fica_assim_entao 0 uai
+    
 //     enquanto_tiver_trem (i < 10) i fica_assim_entao i + 1 uai
+    
+//     oia_proce_ve("Q7 - Valor final de i: ") uai
+//     oia_proce_ve(i) uai
 // cabo
 
-// // Q8: Laço for com (Descomente p testar)
+// // Q8: Laço for
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru i, sum uai
@@ -56,31 +93,54 @@
     
 //     roda_esse_trem (i fica_assim_entao 0 ; i <= 4 ; i fica_assim_entao i + 1)
 //         sum fica_assim_entao sum + i uai
+        
+//     oia_proce_ve("Q8 - Soma total: ") uai
+//     oia_proce_ve(sum) uai
 // cabo
 
-// // Q9: If aninhado simples (Descomente p testar)
+// // Q9: If aninhado simples
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru a, b, c, d, x uai
+//     a fica_assim_entao 10 uai
+//     b fica_assim_entao 5 uai
+//     c fica_assim_entao 7 uai
+//     d fica_assim_entao 7 uai
+//     x fica_assim_entao 0 uai
     
 //     uai_se (a > b)
 //         uai_se (c mema_coisa d)
 //             x fica_assim_entao 1 uai
+            
+//     oia_proce_ve("Q9 - Resultado de x: ") uai
+//     oia_proce_ve(x) uai
 // cabo
 
-// // Q10: Expressão booleana composta em laço (Descomente p testar)
+// // Q10: Expressão booleana composta em laço
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru a, b, x, y uai
+//     a fica_assim_entao 0 uai
+//     b fica_assim_entao 5 uai
+//     x fica_assim_entao 1 uai
+//     y fica_assim_entao 2 uai
     
 //     enquanto_tiver_trem (a < b tamem x neh_nada y)
 //         a fica_assim_entao a + 1 uai
+        
+//     oia_proce_ve("Q10 - Valor final de a: ") uai
+//     oia_proce_ve(a) uai
 // cabo
 
-// // Q11: If-else aninhado com múltiplas ações (Descomente p testar)
+// // Q11: If-else aninhado com múltiplas ações
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru a, b, c, d, x uai
+//     a fica_assim_entao 2 uai
+//     b fica_assim_entao 5 uai
+//     c fica_assim_entao 10 uai
+//     d fica_assim_entao 4 uai
+//     x fica_assim_entao 0 uai
     
 //     uai_se (a < b)
 //     simbora
@@ -91,12 +151,16 @@
 //     cabo
 //     uai_senao
 //         x fica_assim_entao 3 uai
+        
+//     oia_proce_ve("Q11 - Resultado de x: ") uai
+//     oia_proce_ve(x) uai
 // cabo
 
-// // Q12: Laço while com continue e break (Descomente p testar)
+// // Q12: Laço while com continue e break
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru i, j, sum uai
+//     i fica_assim_entao 0 uai
 //     sum fica_assim_entao 0 uai
     
 //     enquanto_tiver_trem (i < 10)
@@ -121,9 +185,12 @@
 //             para_o_trem uai
 //         cabo
 //     cabo
+    
+//     oia_proce_ve("Q12 - Soma final: ") uai
+//     oia_proce_ve(sum) uai
 // cabo
 
-// // Q13: Laços aninhados com operação composta (Descomente p testar)
+// // Q13: Laços aninhados com operação composta
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru i, j, total uai
@@ -132,38 +199,48 @@
 //     roda_esse_trem (i fica_assim_entao 0 ; i <= 2 ; i fica_assim_entao i + 1)
 //         roda_esse_trem (j fica_assim_entao 0 ; j <= 1 ; j fica_assim_entao j + 1)
 //             total fica_assim_entao total + (i veiz j) uai
+            
+//     oia_proce_ve("Q13 - Total acumulado: ") uai
+//     oia_proce_ve(total) uai
 // cabo
 
-// // Q14: Condicional com três ramos (Descomente p testar)
+// // Q14: Condicional com três ramos
 // bora_cumpade main()
 // simbora
 //     trem_di_numeru a, b, x uai
+//     a fica_assim_entao 12 uai
+//     b fica_assim_entao 8 uai
+//     x fica_assim_entao 0 uai
     
 //     uai_se (a mema_coisa b)
 //         x fica_assim_entao 1 uai
-//     uai_senao uai_se (a > b)  // else if existe no mineres?
+//     uai_senao uai_se (a > b)
 //         x fica_assim_entao 2 uai
 //     uai_senao
 //         x fica_assim_entao 3 uai
+        
+//     oia_proce_ve("Q14 - Ramo escolhido (x): ") uai
+//     oia_proce_ve(x) uai
 // cabo
 
-// Q15: Sequência de Fibonacci (Descomente p testar)
-bora_cumpade main()
-simbora
-    trem_di_numeru n, a, b, prox, i uai
+// // Q15: Sequência de Fibonacci
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru n, a, b, prox, i uai
     
-    oia_proce_ve("Digite N:") uai
-    xove(trem_di_numeru, n) uai
+//     oia_proce_ve("Digite N:") uai
+//     xove(trem_di_numeru, n) uai
     
-    a fica_assim_entao 0 uai
-    b fica_assim_entao 1 uai
+//     a fica_assim_entao 0 uai
+//     b fica_assim_entao 1 uai
     
-    roda_esse_trem (i fica_assim_entao 1 ; i <= n ; i fica_assim_entao i + 1)
-    simbora
-        prox fica_assim_entao a + b uai
-        a fica_assim_entao b uai
-        b fica_assim_entao prox uai
-    cabo
-        oia_proce_ve("Enésimo termo:") uai
-        oia_proce_ve(a) uai
-cabo
+//     roda_esse_trem (i fica_assim_entao 1 ; i <= n ; i fica_assim_entao i + 1)
+//     simbora
+//         prox fica_assim_entao a + b uai
+//         a fica_assim_entao b uai
+//         b fica_assim_entao prox uai
+//     cabo
+    
+//     oia_proce_ve("Enésimo termo:") uai
+//     oia_proce_ve(a) uai
+// cabo

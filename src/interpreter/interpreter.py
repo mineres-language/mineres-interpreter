@@ -89,8 +89,11 @@ class Interpretador:
                 if func == "print":
                     # O parser gera ("call", "print", var, None) ou ("call", "print", None, literal)
                     # Verificamos qual posição contém a informação
-                    dado = instrucao[2] if instrucao[2] is not None else instrucao[3]
-                    valor = self.obter_valor(dado)
+
+                    if instrucao[3] is not None:
+                        valor = instrucao[3]
+                    else:
+                        valor = self.obter_valor(instrucao[2])
                     
                     # Removemos aspas duplas de strings literais apenas na hora de imprimir
                     if isinstance(valor, str) and valor.startswith('"') and valor.endswith('"'):

@@ -53,7 +53,7 @@ def main():
     print("-"*40 + "\n")
     
     # Configuração de caminhos
-    arquivo_entrada     = "data/input/entrada.uai"
+    arquivo_entrada     = "data/input/testes.uai"
     arquivo_saida       = "data/output/saida.uai"
     arquivo_saida_ir    = "data/output/saida_ir.uai"
 
