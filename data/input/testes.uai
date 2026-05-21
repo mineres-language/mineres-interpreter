@@ -223,24 +223,248 @@
 //     oia_proce_ve(x) uai
 // cabo
 
-// // Q15: Sequência de Fibonacci
+// Q15: Sequência de Fibonacci
+bora_cumpade main()
+simbora
+    trem_di_numeru n, a, b, prox, i uai
+    
+    oia_proce_ve("Digite N:") uai
+    xove(trem_di_numeru, n) uai
+    
+    a fica_assim_entao 0 uai
+    b fica_assim_entao 1 uai
+    
+    roda_esse_trem (i fica_assim_entao 1 ; i <= n ; i fica_assim_entao i + 1)
+    simbora
+        prox fica_assim_entao a + b uai
+        a fica_assim_entao b uai
+        b fica_assim_entao prox uai
+    cabo
+    
+    oia_proce_ve("Enésimo termo:") uai
+    oia_proce_ve(a) uai
+cabo
+
+// // Q16: Fatorial
 // bora_cumpade main()
 // simbora
-//     trem_di_numeru n, a, b, prox, i uai
+//     trem_di_numeru n, fat, i uai
     
 //     oia_proce_ve("Digite N:") uai
 //     xove(trem_di_numeru, n) uai
     
-//     a fica_assim_entao 0 uai
-//     b fica_assim_entao 1 uai
+//     fat fica_assim_entao 1 uai
+//     i fica_assim_entao 1 uai
+    
+//     enquanto_tiver_trem (i <= n)
+//     simbora
+//         fat fica_assim_entao fat veiz i uai
+//         i fica_assim_entao i + 1 uai
+//     cabo
+
+//     oia_proce_ve("resultado:",fat) uai
+// cabo
+
+// // Q17: Verificação de número primo
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru n, divisores, i, resto uai
+    
+//     oia_proce_ve("Digite N:") uai
+//     xove(trem_di_numeru, n) uai
+    
+//     divisores fica_assim_entao 0 uai
     
 //     roda_esse_trem (i fica_assim_entao 1 ; i <= n ; i fica_assim_entao i + 1)
 //     simbora
-//         prox fica_assim_entao a + b uai
-//         a fica_assim_entao b uai
-//         b fica_assim_entao prox uai
+//         resto fica_assim_entao n % i uai
+//         uai_se (resto mema_coisa 0)
+//             divisores fica_assim_entao divisores + 1 uai
 //     cabo
     
-//     oia_proce_ve("Enésimo termo:") uai
+//     uai_se (divisores mema_coisa 2)
+//         oia_proce_ve("primo") uai
+//     uai_senao
+//         oia_proce_ve("nao eh primo") uai
+// cabo
+
+// // Q18: Verificação de numero palíndromo
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru n, temp, reverso, digito uai
+    
+//     oia_proce_ve("Digite N:") uai
+//     xove(trem_di_numeru, n) uai
+    
+//     temp fica_assim_entao n uai
+//     reverso fica_assim_entao 0 uai
+    
+//     enquanto_tiver_trem (temp > 0)
+//     simbora
+//         digito fica_assim_entao temp % 10 uai
+//         reverso fica_assim_entao (reverso veiz 10) + digito uai
+//         temp fica_assim_entao temp / 10 uai
+//     cabo
+    
+//     uai_se (n mema_coisa reverso)
+//         oia_proce_ve("palindromo") uai
+//     uai_senao
+//         oia_proce_ve("nao_palindromo") uai
+// cabo
+
+// // Q19: Verificar tipo de triângulo
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, c uai
+    
+//     xove(trem_di_numeru, a) uai
+//     xove(trem_di_numeru, b) uai
+//     xove(trem_di_numeru, c) uai
+    
+//     uai_se (a + b > c tamem a + c > b tamem b + c > a)
+//     simbora
+//         uai_se (a mema_coisa b tamem b mema_coisa c)
+//             oia_proce_ve("Equilatero") uai
+//         uai_senao uai_se (a mema_coisa b quarque_um a mema_coisa c quarque_um b mema_coisa c)
+//             oia_proce_ve("Isosceles") uai
+//         uai_senao
+//             oia_proce_ve("Escaleno") uai
+//     cabo
+//     uai_senao
+//         oia_proce_ve("Invalido") uai
+// cabo
+
+// // Q20: Soma dos digitos de um número
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru n, soma, digito uai
+    
+//     xove(trem_di_numeru, n) uai
+    
+//     soma fica_assim_entao 0 uai
+    
+//     enquanto_tiver_trem (n > 0)
+//     simbora
+//         digito fica_assim_entao n % 10 uai
+//         soma fica_assim_entao soma + digito uai
+//         n fica_assim_entao n / 10 uai
+//     cabo
+    
+//     oia_proce_ve("Soma dos digitos:") uai
+//     oia_proce_ve(soma) uai
+// cabo
+
+
+// // Q*: MDC de dois números
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, resto uai
+    
+//     xove(trem_di_numeru, a) uai
+//     xove(trem_di_numeru, b) uai
+    
+//     enquanto_tiver_trem (b neh_nada 0)
+//     simbora
+//         resto fica_assim_entao a % b uai
+//         a fica_assim_entao b uai
+//         b fica_assim_entao resto uai
+//     cabo
+    
+//     oia_proce_ve("MDC:") uai
 //     oia_proce_ve(a) uai
+// cabo
+
+// // Q21: MMC de dois números
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru a, b, mmc, achou uai
+    
+//     xove(trem_di_numeru, a) uai
+//     xove(trem_di_numeru, b) uai
+    
+//     uai_se (a > b)
+//         mmc fica_assim_entao a uai
+//     uai_senao
+//         mmc fica_assim_entao b uai
+        
+//     achou fica_assim_entao 0 uai
+    
+//     enquanto_tiver_trem (achou mema_coisa 0)
+//     simbora
+//         uai_se (mmc % a mema_coisa 0 tamem mmc % b mema_coisa 0)
+//             achou fica_assim_entao 1 uai
+//         uai_senao
+//             mmc fica_assim_entao mmc + 1 uai
+//     cabo
+    
+//     oia_proce_ve("MMC:") uai
+//     oia_proce_ve(mmc) uai
+// cabo
+
+// // Q22: Inverter um numero
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru n, temp, reverso, digito, idade, resultado uai
+    
+//     xove(trem_di_numeru, n) uai
+    
+//     idade fica_assim_entao 1 uai
+    
+//     temp fica_assim_entao n uai
+//     reverso fica_assim_entao 0 uai
+    
+//     enquanto_tiver_trem (temp > 0)
+//     simbora
+//         digito fica_assim_entao temp % 10 uai
+//         reverso fica_assim_entao (reverso veiz 10) + digito uai
+//         temp fica_assim_entao temp / 10 uai
+//     cabo
+    
+//     resultado fica_assim_entao reverso + idade uai
+    
+//     oia_proce_ve("Resultado invertido somado com a idade:") uai
+//     oia_proce_ve(resultado) uai
+// cabo
+
+// // Q23: Potência com multiplas sucessivas
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru base, expoente, resultado uai
+    
+//     xove(trem_di_numeru, base) uai
+//     xove(trem_di_numeru, expoente) uai
+    
+//     resultado fica_assim_entao 1 uai
+    
+//     enquanto_tiver_trem (expoente > 0)
+//     simbora
+//         resultado fica_assim_entao resultado veiz base uai
+//         expoente fica_assim_entao expoente - 1 uai
+//     cabo
+    
+//     oia_proce_ve("Resultado da Potencia:") uai
+//     oia_proce_ve(resultado) uai
+// cabo
+
+// // Q24: Contar quantos dígitos pares há em um número
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru n, contador, digito uai
+    
+//     xove(trem_di_numeru, n) uai
+    
+//     contador fica_assim_entao 0 uai
+    
+//     enquanto_tiver_trem (n > 0)
+//     simbora
+//         digito fica_assim_entao n % 10 uai
+        
+//         uai_se (digito % 2 mema_coisa 0)
+//             contador fica_assim_entao contador + 1 uai
+            
+//         n fica_assim_entao n / 10 uai
+//     cabo
+    
+//     oia_proce_ve("Digitos pares:") uai
+//     oia_proce_ve(contador) uai
 // cabo
