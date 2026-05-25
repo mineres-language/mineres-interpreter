@@ -39,15 +39,12 @@ class Interpretador:
         if operando is None or operando == "null":
             return None
             
-        # Se for string e estiver na memória, pega o valor
-        if isinstance(operando, str) and operando in self.variaveis:
-            return self.variaveis[operando]
-            
-        # Caso especial para tentar acessar variável que não existe
-        if isinstance(operando, str) and (operando.startswith("t") or operando.isalpha()):
-            # Checagem básica para diferenciar string literal (que costuma vir com aspas)
-            if not operando.startswith('"'):
-                 self.disparar_erro(f"Variável ou temporária '{operando}' acessada antes de ser inicializada.")
+        if isinstance(operando, str) and operando.startswith('@'):
+            if operando in self.variaveis:
+                return self.variaveis[operando]
+            else:
+                nome_limpo = operando[1:]
+                self.disparar_erro(f"Variável ou temporária '{nome_limpo}' acessada antes de ser inicializada.")
                  
         return operando
 

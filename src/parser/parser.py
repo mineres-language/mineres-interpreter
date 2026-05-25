@@ -183,7 +183,7 @@ class Parser:
 
         for nome, linha, coluna in nomes:
             self.tabela.declarar(nome, tipo, linha, coluna)
-            codigo.append(("att", nome, valor_inicial, None))
+            codigo.append(("att", f"@{nome}", valor_inicial, None))
 
         return codigo
 
@@ -243,7 +243,7 @@ class Parser:
             self.consome(DEL_FECHA_PAR)
             self.consome(DEL_UAI)
             self.tabela.verificar_uso(nome, tk[2], tk[3])
-            return [("call", "read", nome, None)]
+            return [("call", "read", f"@{nome}", None)]
 
         elif atual == PR_OIA_PROCE_VE:
             self.consome(PR_OIA_PROCE_VE)
@@ -470,7 +470,8 @@ class Parser:
         # (continue não faz sentido em switch — usuário deve evitar.)
         self.pilha_loops.append((L_fim, L_fim))
 
-        codigo = self.parse_dosCasos(var, L_fim)
+        var_ir = f"@{var}"
+        codigo = self.parse_dosCasos(var_ir, L_fim)
         self.consome(DEL_CABO)
 
         self.pilha_loops.pop()
@@ -571,7 +572,9 @@ class Parser:
                 print("Lado esquerdo da atribuição deve ser um identificador simples.")
                 sys.exit(1)
 
-            self.tabela.verificar_uso(lugar_esq, tk[2], tk[3])
+            # Limpa o '@' para verificar na tabela original
+            nome_real = lugar_esq[1:] if lugar_esq.startswith('@') else lugar_esq
+            self.tabela.verificar_uso(nome_real, tk[2], tk[3])
 
             codigo = list(cod_dir)
             codigo.append(("att", lugar_esq, lugar_dir, None))
@@ -587,7 +590,10 @@ class Parser:
         com identificadores começando com 't', então usamos a tabela:
         é identificador simples se a string ESTIVER na tabela de símbolos.
         """
-        return isinstance(lugar, str) and self.tabela.existe(lugar)
+        if isinstance(lugar, str) and lugar.startswith('@'):
+            nome_real = lugar[1:]
+            return self.tabela.existe(nome_real)
+        return False
 
     # ---- Expressões binárias com associatividade à esquerda ----
 
@@ -769,7 +775,7 @@ class Parser:
         if codigo == IDENTIFICADOR:
             self.consome(IDENTIFICADOR)
             self.tabela.verificar_uso(codigo_token, linha, coluna)
-            return [], codigo_token, True
+            return [], f"@{codigo_token}", True
 
         if codigo in literais_validos:
             self.consome(codigo)
