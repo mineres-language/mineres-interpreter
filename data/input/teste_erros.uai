@@ -1,19 +1,19 @@
 // Teste Erro: Divisão por Zero (Descomente p testar)
-bora_cumpade main() simbora
-    trem_di_numeru dinheiro uai
-    trem_di_numeru pessoas uai
-    trem_di_numeru divisao uai
+// bora_cumpade main() simbora
+//     trem_di_numeru dinheiro uai
+//     trem_di_numeru pessoas uai
+//     trem_di_numeru divisao uai
     
-    dinheiro fica_assim_entao 100 uai
-    pessoas fica_assim_entao 0 uai
+//     dinheiro fica_assim_entao 100 uai
+//     pessoas fica_assim_entao 0 uai
     
-    oia_proce_ve("Preparando para dividir o dinheiro...") uai
+//     oia_proce_ve("Preparando para dividir o dinheiro...") uai
     
-    // O erro acontece na linha abaixo (divisão inteira por zero)
-    divisao fica_assim_entao dinheiro / pessoas uai
+//     // O erro acontece na linha abaixo (divisão inteira por zero)
+//     divisao fica_assim_entao dinheiro / pessoas uai
     
-    oia_proce_ve("Isso nunca sera impresso!") uai
-cabo
+//     oia_proce_ve("Isso nunca sera impresso!") uai
+// cabo
 
 // Teste Erro: Módulo por Zero (Descomente p testar)
 // bora_cumpade main() simbora

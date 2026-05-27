@@ -1,20 +1,28 @@
 bora_cumpade main()
 simbora
-    trem_di_numeru opcao uai
-    opcao fica_assim_entao 2 uai
-
-    dependenu (opcao) simbora
-        du_casu 1 : simbora
-            oia_proce_ve("Escolheu um") uai
-        cabo
-        du_casu 2 : simbora
-            oia_proce_ve("Escolheu dois") uai
-        cabo
-        du_casu 3 : simbora
-            oia_proce_ve("Escolheu tres") uai
-        cabo
-        uai_so : simbora
-            oia_proce_ve("Nenhum dos dois, uai") uai
-        cabo
-    cabo
+    trem_discrita a, b uai
+    a fica_assim_entao "teste" uai
+    b fica_assim_entao a + a uai
+    b fica_assim_entao a + "a" uai
 cabo
+
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru opcao uai
+//     opcao fica_assim_entao 2 uai
+
+//     dependenu (opcao) simbora
+//         du_casu 1 : simbora
+//             oia_proce_ve("Escolheu um") uai
+//         cabo
+//         du_casu 2 : simbora
+//             oia_proce_ve("Escolheu dois") uai
+//         cabo
+//         du_casu 3 : simbora
+//             oia_proce_ve("Escolheu tres") uai
+//         cabo
+//         uai_so : simbora
+//             oia_proce_ve("Nenhum dos dois, uai") uai
+//         cabo
+//     cabo
+// cabo

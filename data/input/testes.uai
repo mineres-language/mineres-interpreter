@@ -224,26 +224,26 @@
 // cabo
 
 // Q15: Sequência de Fibonacci
-bora_cumpade main()
-simbora
-    trem_di_numeru n, a, b, prox, i uai
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru n, a, b, prox, i uai
     
-    oia_proce_ve("Digite N:") uai
-    xove(trem_di_numeru, n) uai
+//     oia_proce_ve("Digite N:") uai
+//     xove(trem_di_numeru, n) uai
     
-    a fica_assim_entao 0 uai
-    b fica_assim_entao 1 uai
+//     a fica_assim_entao 0 uai
+//     b fica_assim_entao 1 uai
     
-    roda_esse_trem (i fica_assim_entao 1 ; i <= n ; i fica_assim_entao i + 1)
-    simbora
-        prox fica_assim_entao a + b uai
-        a fica_assim_entao b uai
-        b fica_assim_entao prox uai
-    cabo
+//     roda_esse_trem (i fica_assim_entao 1 ; i <= n ; i fica_assim_entao i + 1)
+//     simbora
+//         prox fica_assim_entao a + b uai
+//         a fica_assim_entao b uai
+//         b fica_assim_entao prox uai
+//     cabo
     
-    oia_proce_ve("Enésimo termo:") uai
-    oia_proce_ve(a) uai
-cabo
+//     oia_proce_ve("Enésimo termo:") uai
+//     oia_proce_ve(a) uai
+// cabo
 
 // // Q16: Fatorial
 // bora_cumpade main()
@@ -451,6 +451,7 @@ cabo
 // simbora
 //     trem_di_numeru n, contador, digito uai
     
+//     oia_proce_ve("N:") uai
 //     xove(trem_di_numeru, n) uai
     
 //     contador fica_assim_entao 0 uai
