@@ -24,7 +24,7 @@ def analise_lexica(fonte: str, arquivo_saida: str) -> list:
         os.makedirs(os.path.dirname(arquivo_saida), exist_ok=True)
         with open(arquivo_saida, "w", encoding="utf-8") as f:
             f.write(formata_tokens(lexer.tokens))
-        print(f"  [LEXER] Sucesso! {len(lexer.tokens)} tokens gerados, tokens salvos em {arquivo_saida}.")
+        # print(f"[LEXER] Sucesso! {len(lexer.tokens)} tokens gerados, tokens salvos em {arquivo_saida}.")
         return lexer.tokens
     else:
         print("  [LEXER] Falha na análise léxica.")
@@ -57,30 +57,30 @@ def main():
     arquivo_saida       = "data/output/saida.uai"
     arquivo_saida_ir    = "data/output/saida_ir.uai"
 
-    print(f"  Arquivo de entrada: {arquivo_entrada}")
-    print(f"  Saída léxica      : {arquivo_saida}")
-    print(f"  Saída IR          : {arquivo_saida_ir}\n")
+    # print(f"  Arquivo de entrada: {arquivo_entrada}")
+    # print(f"  Saída léxica      : {arquivo_saida}")
+    # print(f"  Saída IR          : {arquivo_saida_ir}\n")
 
     # Leitura do arquivo
     fonte = read_file(arquivo_entrada)
 
     # ----------------------------------- 
     # Análise Léxica
-    print(" "*7 + "-" * 5 + " ANÁLISE LÉXICA (LEXER) " + "-" * 5)
+    # print(" "*7 + "-" * 5 + " ANÁLISE LÉXICA (LEXER) " + "-" * 5)
     tokens = analise_lexica(fonte, arquivo_saida)
-    print("\n" + "-"*40 + "\n")
+    # print("\n" + "-"*40 + "\n")
 
     # -----------------------------------
     # Análise Sintática
-    print(" "*7 + "-" * 5 + " ANÁLISE SINTÁTICA (PARSER) " + "-" * 5)
+    # print(" "*7 + "-" * 5 + " ANÁLISE SINTÁTICA (PARSER) " + "-" * 5)
     codigo_ir = analise_sintatica(tokens)
-    print("\n" + "-"*40 + "\n")
+    # print("\n" + "-"*40 + "\n")
 
     # -----------------------------------
     # Geração de Código Intermediário
-    print(" "*2 + "-" * 5 + " GERAÇÃO DE CÓDIGO INTERMEDIÁRIO " + "-" * 5)
+    # print(" "*2 + "-" * 5 + " GERAÇÃO DE CÓDIGO INTERMEDIÁRIO " + "-" * 5)
     gera_ir(codigo_ir, arquivo_saida_ir)
-    print("\n" + "-"*40 + "\n")
+    # print("\n" + "-"*40 + "\n")
 
     # -----------------------------------
     # Execução (Máquina Virtual)

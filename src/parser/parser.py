@@ -120,7 +120,7 @@ class Parser:
 
     def parse_stmt(self) -> list:
         atual = self.token_atual()[1]
-        tipos_variaveis = {PR_TREM_DI_NUMERU, PR_TREM_CUM_VIRGULA, PR_TREM_DISCRITA, PR_TREM_DISCOLHE, PR_TROSSO} # Hash rápida O(1)
+        tipos_variaveis = {PR_TREM_DI_NUMERU, PR_TREM_CUM_VIRGULA, PR_TREM_DISCRITA, PR_TREM_DISCOLHE, PR_TROSSO}
         
         if atual in tipos_variaveis:
             return self.parse_declaration()
@@ -161,10 +161,10 @@ class Parser:
 
         elif atual in {DEL_UAI, DEL_PONTO_VIRGULA}:
             self.consome(DEL_UAI)
-            return []  # statement vazio
+            return []
 
         # caso padrão: expressão seguida de 'uai'
-        codigo, _ = self.parse_atrib()
+        codigo, _, _ = self.parse_atrib()
         self.consome(DEL_UAI)
         return codigo
 
@@ -269,7 +269,7 @@ class Parser:
           - Se for variável: (call, print, var, null)
           - Se for literal:  (call, print, null, valor)
         """
-        codigo, lugar, eh_variavel = self.parse_fatorZin_com_info()
+        codigo, lugar, eh_variavel, _ = self.parse_fatorZin_com_info()
 
         if eh_variavel:
             codigo.append(("call", "print", lugar, None))
@@ -307,7 +307,7 @@ class Parser:
         """
         self.consome(PR_UAI_SE)
         self.consome(DEL_ABRE_PAR)
-        cod_cond, lugar_cond = self.parse_expr()
+        cod_cond, lugar_cond, _ = self.parse_expr()
         self.consome(DEL_FECHA_PAR)
 
         L_then = self.gerador_label.proximo()
@@ -354,7 +354,7 @@ class Parser:
 
         codigo = [("label", L_inicio, None, None)]
 
-        cod_cond, lugar_cond = self.parse_expr()
+        cod_cond, lugar_cond, _ = self.parse_expr()
         codigo.extend(cod_cond)
         codigo.append(("if", lugar_cond, L_corpo, L_fim))
 
@@ -399,13 +399,13 @@ class Parser:
         codigo = []
 
         # 1ª parte: inicialização
-        cod_init, _ = self.parse_optExpr()
+        cod_init, _, _ = self.parse_optExpr()
         codigo.extend(cod_init)
         self.consome(DEL_PONTO_VIRGULA)
 
         # 2ª parte: condição
         codigo.append(("label", L_cond, None, None))
-        cod_cond, lugar_cond = self.parse_optExpr()
+        cod_cond, lugar_cond, _ = self.parse_optExpr()
         codigo.extend(cod_cond)
 
         if lugar_cond is None:
@@ -417,7 +417,7 @@ class Parser:
         self.consome(DEL_PONTO_VIRGULA)
 
         # 3ª parte: incremento (gerado AGORA, mas inserido depois do corpo)
-        cod_incr, _ = self.parse_optExpr()
+        cod_incr, _, _ = self.parse_optExpr()
         self.consome(DEL_FECHA_PAR)
 
         # corpo do for
@@ -445,7 +445,7 @@ class Parser:
         """
         atual = self.token_atual()[1]
         if atual in {DEL_PONTO_VIRGULA, DEL_FECHA_PAR}:
-            return [], None
+            return [], None, None
         return self.parse_atrib()
 
     def parse_caseStmt(self) -> list:
@@ -498,7 +498,7 @@ class Parser:
             (label, L_proximo, null, null)
         """
         self.consome(PR_DU_CASU)
-        cod_valor, lugar_valor, _ = self.parse_fatorZin_com_info()
+        cod_valor, lugar_valor, _, _ = self.parse_fatorZin_com_info()
         self.consome(DEL_DOIS_PONTOS)
 
         t_cmp     = self.gerador_temp.proximo()
@@ -550,10 +550,10 @@ class Parser:
         Atribuição é tratada como expressão. Se for atribuição,
         gera (att, var, valor, null) e retorna a variável como lugar.
         """
-        cod_esq, lugar_esq = self.parse_or()
-        return self.parse_restoAtrib(cod_esq, lugar_esq)
+        cod_esq, lugar_esq, tipo_esq = self.parse_or()
+        return self.parse_restoAtrib(cod_esq, lugar_esq, tipo_esq)
 
-    def parse_restoAtrib(self, cod_esq: list, lugar_esq: str) -> tuple:
+    def parse_restoAtrib(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """
         <restoAtrib> -> 'fica_assim_entao' <atrib> | & ;
 
@@ -563,9 +563,9 @@ class Parser:
         if self.token_atual()[1] == OP_FICA_ASSIM_ENTAO:
             tk = self.token_atual()
             self.consome(OP_FICA_ASSIM_ENTAO)
-            cod_dir, lugar_dir = self.parse_atrib()
+            
+            cod_dir, lugar_dir, tipo_dir = self.parse_atrib()
 
-            # validação: lado esquerdo deve ser variável declarada
             if cod_esq or not self._eh_identificador_simples(lugar_esq):
                 print("\n[ERRO SEMÂNTICO]")
                 print(f"Linha: {tk[2]}, Coluna: {tk[3]}")
@@ -576,11 +576,23 @@ class Parser:
             nome_real = lugar_esq[1:] if lugar_esq.startswith('@') else lugar_esq
             self.tabela.verificar_uso(nome_real, tk[2], tk[3])
 
+            if tipo_esq != tipo_dir:
+                if (tipo_esq == PR_TREM_CUM_VIRGULA and tipo_dir == PR_TREM_DI_NUMERU) or \
+                   (tipo_esq == PR_TREM_DI_NUMERU and tipo_dir == PR_TREM_CUM_VIRGULA):
+                    pass
+                else:
+                    nome_tipo_esq = NOME_DO_TIPO.get(tipo_esq, "desconhecido")
+                    nome_tipo_dir = NOME_DO_TIPO.get(tipo_dir, "desconhecido")
+                    print("\n[ERRO SEMÂNTICO]")
+                    print(f"Linha: {tk[2]}, Coluna: {tk[3]}")
+                    print(f"Tipos incompativeis na atribuição. A variável '{nome_real}' é do tipo '{nome_tipo_esq}', mas recebeu um '{nome_tipo_dir}'.")
+                    sys.exit(1)
+
             codigo = list(cod_dir)
             codigo.append(("att", lugar_esq, lugar_dir, None))
-            return codigo, lugar_esq
+            return codigo, lugar_esq, tipo_esq
 
-        return cod_esq, lugar_esq
+        return cod_esq, lugar_esq, tipo_esq
 
     def _eh_identificador_simples(self, lugar: str) -> bool:
         """
@@ -599,69 +611,69 @@ class Parser:
 
     def parse_or(self) -> tuple:
         """ <or> -> <xor> <restoOr> """
-        cod, lugar = self.parse_xor()
-        return self.parse_restoOr(cod, lugar)
+        cod, lugar, tipo = self.parse_xor()
+        return self.parse_restoOr(cod, lugar, tipo)
 
-    def parse_restoOr(self, cod_esq: list, lugar_esq: str) -> tuple:
+    def parse_restoOr(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """ <restoOr> -> 'quarque_um' <xor> <restoOr> | & """
         if self.token_atual()[1] == OP_QUARQUE_UM:
             self.consome(OP_QUARQUE_UM)
-            cod_dir, lugar_dir = self.parse_xor()
+            cod_dir, lugar_dir, tipo_dir = self.parse_xor()
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append(("or", t, lugar_esq, lugar_dir))
-            return self.parse_restoOr(codigo, t)
-        return cod_esq, lugar_esq
+            return self.parse_restoOr(codigo, t, tipo_esq)
+        return cod_esq, lugar_esq, tipo_esq
 
     def parse_xor(self) -> tuple:
         """ <xor> -> <and> <restoXor> """
-        cod, lugar = self.parse_and()
-        return self.parse_restoXor(cod, lugar)
+        cod, lugar, tipo = self.parse_and()
+        return self.parse_restoXor(cod, lugar, tipo)
 
-    def parse_restoXor(self, cod_esq: list, lugar_esq: str) -> tuple:
+    def parse_restoXor(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """ <restoXor> -> 'um_o_oto' <and> <restoXor> | & """
         if self.token_atual()[1] == OP_UM_O_OTO:
             self.consome(OP_UM_O_OTO)
-            cod_dir, lugar_dir = self.parse_and()
+            cod_dir, lugar_dir, tipo_dir = self.parse_and()
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append(("xor", t, lugar_esq, lugar_dir))
-            return self.parse_restoXor(codigo, t)
-        return cod_esq, lugar_esq
+            return self.parse_restoXor(codigo, t, tipo_esq)
+        return cod_esq, lugar_esq, tipo_esq
 
     def parse_and(self) -> tuple:
         """ <and> -> <not> <restoAnd> """
-        cod, lugar = self.parse_not()
-        return self.parse_restoAnd(cod, lugar)
+        cod, lugar, tipo = self.parse_not()
+        return self.parse_restoAnd(cod, lugar, tipo)
 
-    def parse_restoAnd(self, cod_esq: list, lugar_esq: str) -> tuple:
+    def parse_restoAnd(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """ <restoAnd> -> 'tamem' <not> <restoAnd> | & """
         if self.token_atual()[1] == OP_TAMEM:
             self.consome(OP_TAMEM)
-            cod_dir, lugar_dir = self.parse_not()
+            cod_dir, lugar_dir, tipo_dir = self.parse_not()
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append(("and", t, lugar_esq, lugar_dir))
-            return self.parse_restoAnd(codigo, t)
-        return cod_esq, lugar_esq
+            return self.parse_restoAnd(codigo, t, tipo_esq)
+        return cod_esq, lugar_esq, tipo_esq
 
     def parse_not(self) -> tuple:
         """ <not> -> 'vam_marca' <not> | <rel> """
         if self.token_atual()[1] == OP_VAM_MARCA:
             self.consome(OP_VAM_MARCA)
-            cod, lugar = self.parse_not()
+            cod, lugar, tipo = self.parse_not()
             t = self.gerador_temp.proximo()
             codigo = list(cod)
             codigo.append(("not", t, lugar, None))
-            return codigo, t
+            return codigo, t, tipo
         return self.parse_rel()
 
     def parse_rel(self) -> tuple:
         """ <rel> -> <add> <restoRel> """
-        cod, lugar = self.parse_add()
-        return self.parse_restoRel(cod, lugar)
+        cod, lugar, tipo = self.parse_add()
+        return self.parse_restoRel(cod, lugar, tipo)
 
-    def parse_restoRel(self, cod_esq: list, lugar_esq: str) -> tuple:
+    def parse_restoRel(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """
         <restoRel> -> ('mema_coisa'|'neh_nada'|'<'|'<='|'>'|'>=') <add> | &
 
@@ -675,49 +687,49 @@ class Parser:
         if atual in ops_rel:
             op = OP_PARA_IR[atual]
             self.consome(atual)
-            cod_dir, lugar_dir = self.parse_add()
+            cod_dir, lugar_dir, tipo_dir = self.parse_add()
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append((op, t, lugar_esq, lugar_dir))
-            return codigo, t
+            return codigo, t, tipo_esq
 
-        return cod_esq, lugar_esq
+        return cod_esq, lugar_esq, tipo_esq
 
     def parse_add(self) -> tuple:
         """ <add> -> <mult> <restoAdd> """
-        cod, lugar = self.parse_mult()
-        return self.parse_restoAdd(cod, lugar)
+        cod, lugar, tipo = self.parse_mult()
+        return self.parse_restoAdd(cod, lugar, tipo)
 
-    def parse_restoAdd(self, cod_esq: list, lugar_esq: str) -> tuple:
+    def parse_restoAdd(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """ <restoAdd> -> ('+'|'-') <mult> <restoAdd> | & """
         atual = self.token_atual()[1]
         if atual in {OP_MAIS, OP_MENOS}:
             op = OP_PARA_IR[atual]
             self.consome(atual)
-            cod_dir, lugar_dir = self.parse_mult()
+            cod_dir, lugar_dir, tipo_dir = self.parse_mult()
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append((op, t, lugar_esq, lugar_dir))
-            return self.parse_restoAdd(codigo, t)
-        return cod_esq, lugar_esq
+            return self.parse_restoAdd(codigo, t, tipo_esq)
+        return cod_esq, lugar_esq, tipo_esq
 
     def parse_mult(self) -> tuple:
         """ <mult> -> <uno> <restoMult> """
-        cod, lugar = self.parse_uno()
-        return self.parse_restoMult(cod, lugar)
+        cod, lugar, tipo = self.parse_uno()
+        return self.parse_restoMult(cod, lugar, tipo)
 
-    def parse_restoMult(self, cod_esq: list, lugar_esq: str) -> tuple:
+    def parse_restoMult(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """ <restoMult> -> ('veiz'|'sob'|'/'|'%') <uno> <restoMult> | & """
         atual = self.token_atual()[1]
         if atual in {OP_VEIZ, OP_SOB, OP_DIVISAO_INT, OP_MODULO}:
             op = OP_PARA_IR[atual]
             self.consome(atual)
-            cod_dir, lugar_dir = self.parse_uno()
+            cod_dir, lugar_dir, tipo_dir = self.parse_uno()
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append((op, t, lugar_esq, lugar_dir))
-            return self.parse_restoMult(codigo, t)
-        return cod_esq, lugar_esq
+            return self.parse_restoMult(codigo, t, tipo_esq)
+        return cod_esq, lugar_esq, tipo_esq
 
     def parse_uno(self) -> tuple:
         """
@@ -730,11 +742,11 @@ class Parser:
         if atual in {OP_MAIS, OP_MENOS}:
             sinal = "+" if atual == OP_MAIS else "-"
             self.consome(atual)
-            cod, lugar = self.parse_uno()
+            cod, lugar, tipo = self.parse_uno()
             t = self.gerador_temp.proximo()
             codigo = list(cod)
             codigo.append(("uno", sinal, t, lugar))
-            return codigo, t
+            return codigo, t, tipo
 
         return self.parse_fatorZao()
 
@@ -742,12 +754,12 @@ class Parser:
         """ <fatorZao> -> <fatorZin> | '(' <atrib> ')' """
         if self.token_atual()[1] == DEL_ABRE_PAR:
             self.consome(DEL_ABRE_PAR)
-            resultado = self.parse_atrib()
+            cod, lugar, tipo = self.parse_atrib()
             self.consome(DEL_FECHA_PAR)
-            return resultado
+            return cod, lugar, tipo
 
-        cod, lugar, _ = self.parse_fatorZin_com_info()
-        return cod, lugar
+        cod, lugar, _, tipo = self.parse_fatorZin_com_info()
+        return cod, lugar, tipo
 
     def parse_fatorZin(self) -> tuple:
         """
@@ -755,8 +767,8 @@ class Parser:
 
         Retorna (lista_codigo, lugar).
         """
-        cod, lugar, _ = self.parse_fatorZin_com_info()
-        return cod, lugar
+        cod, lugar, _, tipo = self.parse_fatorZin_com_info()
+        return cod, lugar, tipo
 
     def parse_fatorZin_com_info(self) -> tuple:
         """
@@ -775,30 +787,35 @@ class Parser:
         if codigo == IDENTIFICADOR:
             self.consome(IDENTIFICADOR)
             self.tabela.verificar_uso(codigo_token, linha, coluna)
-            return [], f"@{codigo_token}", True
+            tipo_var = self.tabela.tipo_de(codigo_token)
+            return [], f"@{codigo_token}", True, tipo_var
 
         if codigo in literais_validos:
             self.consome(codigo)
 
             # Formata o lugar conforme o tipo
             if codigo == LIT_STRING:
-                lugar = codigo_token  # strings são guardadas com aspas pelo formatador
+                lugar = codigo_token
+                tipo_literal = PR_TREM_DISCRITA
             elif codigo == LIT_CHAR:
                 lugar = codigo_token
-            elif codigo == LIT_NUM_INT:
-                lugar = int(codigo_token)
-            elif codigo == LIT_NUM_HEX:
-                lugar = int(codigo_token, 16)
-            elif codigo == LIT_NUM_OCT:
-                lugar = int(codigo_token, 8)
+                tipo_literal = PR_TROSSO
+            elif codigo in {LIT_NUM_INT, LIT_NUM_HEX, LIT_NUM_OCT}:
+                if codigo == LIT_NUM_INT: lugar = int(codigo_token)
+                elif codigo == LIT_NUM_HEX: lugar = int(codigo_token, 16)
+                elif codigo == LIT_NUM_OCT: lugar = int(codigo_token, 8)
+                tipo_literal = PR_TREM_DI_NUMERU
             elif codigo == LIT_NUM_FLOAT:
                 lugar = float(codigo_token)
+                tipo_literal = PR_TREM_CUM_VIRGULA
             elif codigo in {PR_EH, PR_NUM_EH}:
-                lugar = codigo_token  # "eh" ou "num_eh"
+                lugar = codigo_token
+                tipo_literal = PR_TREM_DISCOLHE
             else:
                 lugar = codigo_token
+                tipo_literal = None
 
-            return [], lugar, False
+            return [], lugar, False, tipo_literal
 
         self.disparar_erro_sintatico("Valor literal ou variável", tk)
 
