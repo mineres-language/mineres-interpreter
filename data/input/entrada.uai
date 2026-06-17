@@ -1,10 +1,52 @@
-bora_cumpade main()
-simbora
-    trem_discrita a, b uai
-    a fica_assim_entao "teste" uai
-    b fica_assim_entao a + a uai
-    b fica_assim_entao a + "a" uai
-cabo
+// // Compatibilidade de tipos em operações
+// bora_cumpade main()
+// simbora
+//     trem_discrita texto uai
+//     trem_di_numeru resultado uai
+    
+//     texto fica_assim_entao "Olá" uai
+//     resultado fica_assim_entao texto + 5 uai
+
+//     oia_proce_ve(texto) uai
+//     oia_proce_ve(resultado) uai
+// cabo
+
+
+// // Compatibilidade de tipos em atribuições
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru numero_inteiro uai
+    
+//     numero_inteiro fica_assim_entao "Texto aleatorio" uai
+//     oia_proce_ve(numero_inteiro) uai
+// cabo
+
+
+// // Coerções implícitas (`int` → `float`) trunca ou estoura erro
+// bora_cumpade main()
+// simbora
+//     trem_di_numeru inteiro, resultado uai
+//     trem_cum_virgula decimal uai
+    
+//     inteiro fica_assim_entao 5 uai
+//     decimal fica_assim_entao 2.5 uai
+    
+//     resultado fica_assim_entao inteiro + decimal uai
+
+//     oia_proce_ve(inteiro) uai
+//     oia_proce_ve(decimal) uai
+//     oia_proce_ve(resultado) uai
+// cabo
+
+
+//=============================================== entrada antida
+// bora_cumpade main()
+// simbora
+//     trem_discrita a, b uai
+//     a fica_assim_entao "teste" uai
+//     b fica_assim_entao a + a uai
+//     b fica_assim_entao a + "a" uai
+// cabo
 
 // bora_cumpade main()
 // simbora
