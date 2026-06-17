@@ -567,26 +567,26 @@ class Parser:
             cod_dir, lugar_dir, tipo_dir = self.parse_atrib()
 
             if cod_esq or not self._eh_identificador_simples(lugar_esq):
-                print("\n[ERRO SEMÂNTICO]")
-                print(f"Linha: {tk[2]}, Coluna: {tk[3]}")
-                print("Lado esquerdo da atribuição deve ser um identificador simples.")
-                sys.exit(1)
+                self._disparar_erro_semantico(
+                    "Lado esquerdo da atribuição deve ser um identificador simples.",
+                    tk[2], tk[3]
+                )
 
-            # Limpa o '@' para verificar na tabela original
             nome_real = lugar_esq[1:] if lugar_esq.startswith('@') else lugar_esq
             self.tabela.verificar_uso(nome_real, tk[2], tk[3])
 
+            # --- REGRA RESTRITA DE ATRIBUIÇÃO ---
             if tipo_esq != tipo_dir:
-                if (tipo_esq == PR_TREM_CUM_VIRGULA and tipo_dir == PR_TREM_DI_NUMERU) or \
-                   (tipo_esq == PR_TREM_DI_NUMERU and tipo_dir == PR_TREM_CUM_VIRGULA):
+                # Permite apenas Int -> Float (seguro, não perde dado). 
+                if tipo_esq == PR_TREM_CUM_VIRGULA and tipo_dir == PR_TREM_DI_NUMERU:
                     pass
                 else:
                     nome_tipo_esq = NOME_DO_TIPO.get(tipo_esq, "desconhecido")
                     nome_tipo_dir = NOME_DO_TIPO.get(tipo_dir, "desconhecido")
-                    print("\n[ERRO SEMÂNTICO]")
-                    print(f"Linha: {tk[2]}, Coluna: {tk[3]}")
-                    print(f"Tipos incompativeis na atribuição. A variável '{nome_real}' é do tipo '{nome_tipo_esq}', mas recebeu um '{nome_tipo_dir}'.")
-                    sys.exit(1)
+                    self._disparar_erro_semantico(
+                        f"Tipos incompativeis na atribuição. A variável '{nome_real}' é do tipo '{nome_tipo_esq}', mas recebeu um '{nome_tipo_dir}'.",
+                        tk[2], tk[3]
+                    )
 
             codigo = list(cod_dir)
             codigo.append(("att", lugar_esq, lugar_dir, None))
@@ -606,6 +606,75 @@ class Parser:
             nome_real = lugar[1:]
             return self.tabela.existe(nome_real)
         return False
+    
+    def _disparar_erro_semantico(self, mensagem: str, linha: int, coluna: int):
+        print("\n[ERRO SEMÂNTICO]")
+        print(f"Linha: {linha}, Coluna: {coluna}")
+        print(mensagem)
+        sys.exit(1)
+
+    def _validar_operacao_matematica(self, op_token: int, tipo_esq: int, tipo_dir: int, tk: tuple) -> int:
+        linha, coluna = tk[2], tk[3]
+
+        # 5. Distinção estrita da Divisão Inteira (divI) e Módulo (%)
+        if op_token in {OP_DIVISAO_INT, OP_MODULO}:
+            if tipo_esq != PR_TREM_DI_NUMERU or tipo_dir != PR_TREM_DI_NUMERU:
+                self._disparar_erro_semantico(
+                    "A divisão inteira ('/') e o módulo ('%') exigem dois números inteiros.", 
+                    linha, coluna
+                )
+            return PR_TREM_DI_NUMERU
+
+        # 6. Soma de Chars ('a' + 'b' = "ab")
+        if op_token == OP_MAIS:
+            if tipo_esq == PR_TROSSO and tipo_dir == PR_TROSSO:
+                return PR_TREM_DISCRITA
+
+        # 3 e 4. Compatibilidade e Coerção (int e float)
+        tipos_numericos = {PR_TREM_DI_NUMERU, PR_TREM_CUM_VIRGULA}
+        if tipo_esq in tipos_numericos and tipo_dir in tipos_numericos:
+            # Se um dos dois for float, o resultado "evolui" para float (coerção)
+            if tipo_esq == PR_TREM_CUM_VIRGULA or tipo_dir == PR_TREM_CUM_VIRGULA:
+                return PR_TREM_CUM_VIRGULA
+            return PR_TREM_DI_NUMERU
+
+        # Se tentou somar texto com número, bool com char, etc.
+        op_nome = NOMES_TOKENS.get(op_token, "operador")
+        nome_esq = NOME_DO_TIPO.get(tipo_esq, "desconhecido")
+        nome_dir = NOME_DO_TIPO.get(tipo_dir, "desconhecido")
+        
+        self._disparar_erro_semantico(
+            f"Operacao matematica invalida entre os tipos '{nome_esq}' e '{nome_dir}'.", 
+            linha, coluna
+        )
+    
+    def _validar_operacao_logica(self, op_token: int, tipo_esq: int, tipo_dir: int, tk: tuple) -> int:
+        if tipo_esq != PR_TREM_DISCOLHE or tipo_dir != PR_TREM_DISCOLHE:
+            op_nome = NOMES_TOKENS.get(op_token, "operador logico")
+            self._disparar_erro_semantico(
+                f"A operacao '{op_nome}' exige dois valores do tipo 'trem_discolhe' (booleanos).",
+                tk[2], tk[3]
+            )
+        return PR_TREM_DISCOLHE
+    
+    def _validar_operacao_relacional(self, op_token: int, tipo_esq: int, tipo_dir: int, tk: tuple) -> int:
+        # Verifica se os tipos são comparáveis (ex: não tentar comparar String com Bool)
+        tipos_numericos = {PR_TREM_DI_NUMERU, PR_TREM_CUM_VIRGULA}
+        
+        # Se os dois são numéricos, a comparação é válida (int < float é permitido)
+        if tipo_esq in tipos_numericos and tipo_dir in tipos_numericos:
+            pass
+        # Se não são numéricos, só podem ser comparados se forem estritamente do mesmo tipo (ex: string == string)
+        elif tipo_esq != tipo_dir:
+            op_nome = NOMES_TOKENS.get(op_token, "operador relacional")
+            nome_esq = NOME_DO_TIPO.get(tipo_esq, "desconhecido")
+            nome_dir = NOME_DO_TIPO.get(tipo_dir, "desconhecido")
+            self._disparar_erro_semantico(
+                f"A comparacao '{op_nome}' nao pode ser feita entre '{nome_esq}' e '{nome_dir}'.",
+                tk[2], tk[3]
+            )
+            
+        return PR_TREM_DISCOLHE
 
     # ---- Expressões binárias com associatividade à esquerda ----
 
@@ -617,12 +686,16 @@ class Parser:
     def parse_restoOr(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """ <restoOr> -> 'quarque_um' <xor> <restoOr> | & """
         if self.token_atual()[1] == OP_QUARQUE_UM:
+            tk_op = self.token_atual()
             self.consome(OP_QUARQUE_UM)
+            
             cod_dir, lugar_dir, tipo_dir = self.parse_xor()
+            tipo_resultado = self._validar_operacao_logica(tk_op[1], tipo_esq, tipo_dir, tk_op)
+            
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append(("or", t, lugar_esq, lugar_dir))
-            return self.parse_restoOr(codigo, t, tipo_esq)
+            return self.parse_restoOr(codigo, t, tipo_resultado)
         return cod_esq, lugar_esq, tipo_esq
 
     def parse_xor(self) -> tuple:
@@ -633,12 +706,16 @@ class Parser:
     def parse_restoXor(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """ <restoXor> -> 'um_o_oto' <and> <restoXor> | & """
         if self.token_atual()[1] == OP_UM_O_OTO:
+            tk_op = self.token_atual()
             self.consome(OP_UM_O_OTO)
+            
             cod_dir, lugar_dir, tipo_dir = self.parse_and()
+            tipo_resultado = self._validar_operacao_logica(tk_op[1], tipo_esq, tipo_dir, tk_op)
+            
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append(("xor", t, lugar_esq, lugar_dir))
-            return self.parse_restoXor(codigo, t, tipo_esq)
+            return self.parse_restoXor(codigo, t, tipo_resultado)
         return cod_esq, lugar_esq, tipo_esq
 
     def parse_and(self) -> tuple:
@@ -649,12 +726,16 @@ class Parser:
     def parse_restoAnd(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
         """ <restoAnd> -> 'tamem' <not> <restoAnd> | & """
         if self.token_atual()[1] == OP_TAMEM:
+            tk_op = self.token_atual()
             self.consome(OP_TAMEM)
+            
             cod_dir, lugar_dir, tipo_dir = self.parse_not()
+            tipo_resultado = self._validar_operacao_logica(tk_op[1], tipo_esq, tipo_dir, tk_op)
+            
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append(("and", t, lugar_esq, lugar_dir))
-            return self.parse_restoAnd(codigo, t, tipo_esq)
+            return self.parse_restoAnd(codigo, t, tipo_resultado)
         return cod_esq, lugar_esq, tipo_esq
 
     def parse_not(self) -> tuple:
@@ -685,13 +766,16 @@ class Parser:
                    OP_MAIOR, OP_MAIOR_IGUAL}
 
         if atual in ops_rel:
+            tk_op = self.token_atual()
             op = OP_PARA_IR[atual]
             self.consome(atual)
             cod_dir, lugar_dir, tipo_dir = self.parse_add()
+            # Fiscaliza e transforma o tipo final em booleano
+            tipo_resultado = self._validar_operacao_relacional(tk_op[1], tipo_esq, tipo_dir, tk_op)
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append((op, t, lugar_esq, lugar_dir))
-            return codigo, t, tipo_esq
+            return codigo, t, tipo_resultado
 
         return cod_esq, lugar_esq, tipo_esq
 
@@ -704,13 +788,22 @@ class Parser:
         """ <restoAdd> -> ('+'|'-') <mult> <restoAdd> | & """
         atual = self.token_atual()[1]
         if atual in {OP_MAIS, OP_MENOS}:
+            tk_op = self.token_atual() # Captura o token para saber a linha/coluna
             op = OP_PARA_IR[atual]
             self.consome(atual)
+            
             cod_dir, lugar_dir, tipo_dir = self.parse_mult()
+            
+            # Chama o fiscal para auditar a conta e descobrir o tipo do resultado
+            tipo_resultado = self._validar_operacao_matematica(tk_op[1], tipo_esq, tipo_dir, tk_op)
+
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append((op, t, lugar_esq, lugar_dir))
-            return self.parse_restoAdd(codigo, t, tipo_esq)
+            
+            # Repassa o tipo validado adiante
+            return self.parse_restoAdd(codigo, t, tipo_resultado)
+            
         return cod_esq, lugar_esq, tipo_esq
 
     def parse_mult(self) -> tuple:
@@ -722,13 +815,22 @@ class Parser:
         """ <restoMult> -> ('veiz'|'sob'|'/'|'%') <uno> <restoMult> | & """
         atual = self.token_atual()[1]
         if atual in {OP_VEIZ, OP_SOB, OP_DIVISAO_INT, OP_MODULO}:
+            tk_op = self.token_atual() # Captura o token
             op = OP_PARA_IR[atual]
             self.consome(atual)
+            
             cod_dir, lugar_dir, tipo_dir = self.parse_uno()
+            
+            # Chama o fiscal para auditar a conta e descobrir o tipo do resultado
+            tipo_resultado = self._validar_operacao_matematica(tk_op[1], tipo_esq, tipo_dir, tk_op)
+
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append((op, t, lugar_esq, lugar_dir))
-            return self.parse_restoMult(codigo, t, tipo_esq)
+            
+            # Repassa o tipo validado adiante
+            return self.parse_restoMult(codigo, t, tipo_resultado)
+            
         return cod_esq, lugar_esq, tipo_esq
 
     def parse_uno(self) -> tuple:

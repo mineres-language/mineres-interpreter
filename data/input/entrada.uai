@@ -39,32 +39,83 @@
 // cabo
 
 
-//=============================================== entrada antida
-// bora_cumpade main()
-// simbora
-//     trem_discrita a, b uai
-//     a fica_assim_entao "teste" uai
-//     b fica_assim_entao a + a uai
-//     b fica_assim_entao a + "a" uai
+// // Teste de Divisão Inteira Rigorosa
+// bora_cumpade main() simbora
+//     trem_di_numeru a uai
+//     a fica_assim_entao 10 / 2.0 uai
 // cabo
 
-// bora_cumpade main()
-// simbora
-//     trem_di_numeru opcao uai
-//     opcao fica_assim_entao 2 uai
 
-//     dependenu (opcao) simbora
-//         du_casu 1 : simbora
-//             oia_proce_ve("Escolheu um") uai
-//         cabo
-//         du_casu 2 : simbora
-//             oia_proce_ve("Escolheu dois") uai
-//         cabo
-//         du_casu 3 : simbora
-//             oia_proce_ve("Escolheu tres") uai
-//         cabo
-//         uai_so : simbora
-//             oia_proce_ve("Nenhum dos dois, uai") uai
-//         cabo
-//     cabo
+// // Teste de Promoção (int + float)
+// bora_cumpade main() simbora
+//     trem_di_numeru inteiro uai
+//     // trem_cum_virgula decimal uai
+
+//     inteiro fica_assim_entao 10 + 2.5 uai
+//     // decimal fica_assim_entao 10 + 2.5 uai
+    
+//     oia_proce_ve(inteiro) uai
+//     // oia_proce_ve(decimal) uai
+// cabo
+
+
+// // Int recebendo o resultado de Int + Float
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     x fica_assim_entao 5 + 2.5 uai
+//     oia_proce_ve(x) uai
+// cabo
+
+
+// // Promoção Segura (Float recebendo Int)
+// bora_cumpade main() simbora
+//     trem_cum_virgula y uai
+//     trem_di_numeru z uai
+//     z fica_assim_entao 10 uai
+//     y fica_assim_entao z + 5 uai
+//     oia_proce_ve(y) uai
+// cabo
+
+
+// // Soma de Chars virando String
+// bora_cumpade main() simbora
+//     trem_discrita texto uai
+//     trosso c1 uai
+//     trosso c2 uai
+    
+//     c1 fica_assim_entao 'a' uai
+//     c2 fica_assim_entao 'b' uai
+    
+//     texto fica_assim_entao c1 + c2 uai
+//     oia_proce_ve(texto) uai
+// cabo
+
+
+// // Operadores Lógicos Estritos
+// bora_cumpade main() simbora
+//     trem_discolhe logica uai
+//     logica fica_assim_entao 1 tamem eh uai
+// cabo
+
+
+// // Teste saída booleano
+// bora_cumpade main() simbora
+//     trem_discolhe logica uai
+//     trem_di_numeru a uai
+    
+//     a fica_assim_entao 4 uai
+    
+//     // A comparação a < 5 agora resulta num tipo booleano válido
+//     logica fica_assim_entao a < 5 uai
+    
+//     oia_proce_ve(logica) uai
+// cabo
+
+
+// // Teste saída booleano (erro)
+// bora_cumpade main() simbora
+//     trem_discolhe logica uai
+    
+//     // Tentando comparar maçãs com laranjas
+//     logica fica_assim_entao "texto" < 5 uai
 // cabo
