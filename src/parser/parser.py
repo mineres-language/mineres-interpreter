@@ -6,7 +6,7 @@ PRIMEIROS_DE_STMT = {
     PR_TREM_DI_NUMERU, PR_TREM_CUM_VIRGULA, PR_TREM_DISCRITA, PR_TREM_DISCOLHE, PR_TROSSO,
     PR_XOVE, PR_OIA_PROCE_VE, 
     PR_UAI_SE, PR_ENQUANTO, PR_RODA_ESSE_TREM, PR_DEPENDENU,
-    DEL_SIMBORA, PR_PARA_O_TREM, PR_TOCA_O_TREM, DEL_UAI,
+    DEL_SIMBORA, PR_PARA_O_TREM, PR_TOCA_O_TREM, DEL_UAI, DEL_PONTO_VIRGULA,
     IDENTIFICADOR, LIT_NUM_INT, LIT_NUM_HEX, LIT_NUM_OCT,
     LIT_NUM_FLOAT, LIT_STRING, LIT_CHAR, PR_EH, PR_NUM_EH,
 }
@@ -160,9 +160,9 @@ class Parser:
             return [("jump", label_inicio, None, None)]
 
         elif atual in {DEL_UAI, DEL_PONTO_VIRGULA}:
-            self.consome(DEL_UAI)
+            self.consome(atual)
             return []
-
+        
         # caso padrão: expressão seguida de 'uai'
         codigo, _, _ = self.parse_atrib()
         self.consome(DEL_UAI)
@@ -897,10 +897,10 @@ class Parser:
 
             # Formata o lugar conforme o tipo
             if codigo == LIT_STRING:
-                lugar = codigo_token
+                lugar = f'"{codigo_token}"'
                 tipo_literal = PR_TREM_DISCRITA
             elif codigo == LIT_CHAR:
-                lugar = codigo_token
+                lugar = f"'{codigo_token}'"
                 tipo_literal = PR_TROSSO
             elif codigo in {LIT_NUM_INT, LIT_NUM_HEX, LIT_NUM_OCT}:
                 if codigo == LIT_NUM_INT: lugar = int(codigo_token)

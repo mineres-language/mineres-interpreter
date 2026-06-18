@@ -1,0 +1,14 @@
+bora_cumpade main()
+simbora
+    trem_di_numeru a uai
+    trem_discrita b uai
+    
+    a fica_assim_entao 10 uai
+    b fica_assim_entao "olá" uai
+    
+    // Em Minerês, a análise semântica não bloqueia soma de int com string
+    // O erro será gerado em runtime pelo Python (TypeError: unsupported operand type(s) for +: 'int' and 'str')
+    // em vez de uma mensagem de erro controlada da VM.
+    trem_di_numeru c uai
+    c fica_assim_entao a + b uai
+cabo

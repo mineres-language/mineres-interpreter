@@ -42,9 +42,13 @@ class Interpretador:
         if isinstance(operando, str) and operando.startswith('@'):
             if operando in self.variaveis:
                 return self.variaveis[operando]
-            else:
+            elif operando.startswith('@_t'):
                 nome_limpo = operando[1:]
-                self.disparar_erro(f"Variável ou temporária '{nome_limpo}' acessada antes de ser inicializada.")
+                self.disparar_erro(f"Temporária '{nome_limpo}' acessada antes de ser inicializada.")
+            else:
+                # Se não for uma variável declarada nem temporária,
+                # trata-se de uma string literal do usuário que começa com '@'.
+                return operando
                  
         return operando
 
@@ -123,30 +127,38 @@ class Interpretador:
                 v2 = self.obter_valor(instrucao[3])
                 res = None
 
-                # Operações Aritméticas
-                if op == "add": res = v1 + v2
-                elif op == "sub": res = v1 - v2
-                elif op == "mult": res = v1 * v2
-                elif op == "div":
-                    if v2 == 0: self.disparar_erro("Divisão real por zero.")
-                    res = v1 / v2
-                elif op == "divI":
-                    if v2 == 0: self.disparar_erro("Divisão inteira por zero.")
-                    res = v1 // v2
-                elif op == "mod":
-                    if v2 == 0: self.disparar_erro("Módulo (resto) por zero.")
-                    res = v1 % v2
-                    
-                # Operações Relacionais e Lógicas
-                elif op == "and": res = bool(v1 and v2)
-                elif op == "or":  res = bool(v1 or v2)
-                elif op == "xor": res = bool(v1 ^ v2)
-                elif op == "less": res = v1 < v2
-                elif op == "leq":  res = v1 <= v2
-                elif op == "gret": res = v1 > v2
-                elif op == "geq":  res = v1 >= v2
-                elif op == "eq":   res = v1 == v2
-                elif op == "dif":  res = v1 != v2
+                # Tratamento de literais booleanos para operadores lógicos
+                if op in {"and", "or", "xor"}:
+                    b1 = True if v1 == "eh" else (False if v1 == "num_eh" else bool(v1))
+                    b2 = True if v2 == "eh" else (False if v2 == "num_eh" else bool(v2))
+                    if op == "and": res = bool(b1 and b2)
+                    elif op == "or":  res = bool(b1 or b2)
+                    elif op == "xor": res = bool(b1 ^ b2)
+                else:
+                    try:
+                        # Operações Aritméticas
+                        if op == "add": res = v1 + v2
+                        elif op == "sub": res = v1 - v2
+                        elif op == "mult": res = v1 * v2
+                        elif op == "div":
+                            if v2 == 0: self.disparar_erro("Divisão real por zero.")
+                            res = v1 / v2
+                        elif op == "divI":
+                            if v2 == 0: self.disparar_erro("Divisão inteira por zero.")
+                            res = v1 // v2
+                        elif op == "mod":
+                            if v2 == 0: self.disparar_erro("Módulo (resto) por zero.")
+                            res = v1 % v2
+                            
+                        # Operações Relacionais
+                        elif op == "less": res = v1 < v2
+                        elif op == "leq":  res = v1 <= v2
+                        elif op == "gret": res = v1 > v2
+                        elif op == "geq":  res = v1 >= v2
+                        elif op == "eq":   res = v1 == v2
+                        elif op == "dif":  res = v1 != v2
+                    except TypeError:
+                        self.disparar_erro("Erro de tipo em tempo de execução: Tipos incompatíveis para a operação.")
 
                 self.variaveis[dest] = res
 
@@ -155,7 +167,10 @@ class Interpretador:
                 sinal = instrucao[1]
                 dest = instrucao[2]
                 v = self.obter_valor(instrucao[3])
-                self.variaveis[dest] = v if sinal == "+" else -v
+                try:
+                    self.variaveis[dest] = v if sinal == "+" else -v
+                except TypeError:
+                    self.disparar_erro("Erro de tipo em tempo de execução: Operador unário incompatível com o tipo.")
 
             elif op == "not":
                 # Operador Unário Lógico (!): ("not", destino, origem, None)

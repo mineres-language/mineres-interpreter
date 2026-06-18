@@ -1,9 +1,5 @@
 [
-	("att", "@a", "", null),
-	("att", "@b", "", null),
-	("att", "@a", "teste", null),
-	("add", "@t1", "@a", "@a"),
-	("att", "@b", "@t1", null),
-	("add", "@t2", "@a", "a"),
-	("att", "@b", "@t2", null)
+	("att", @a, 0, null),
+	("att", @a, 10, null),
+	("call", "print", @a, null)
 ]

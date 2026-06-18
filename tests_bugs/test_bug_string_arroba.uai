@@ -1,0 +1,12 @@
+bora_cumpade main()
+simbora
+    trem_discrita nome uai
+    nome fica_assim_entao "teste" uai
+    
+    trem_discrita msg uai
+    // A string abaixo começa com @. O interpretador achará que é uma variável chamada "nome"
+    // E atribuirá o valor da variável "nome" em vez do texto literal "@nome"
+    msg fica_assim_entao "@nome" uai
+    
+    oia_proce_ve(msg) uai // Imprimirá "teste" em vez de "@nome"
+cabo

@@ -26,6 +26,8 @@ def formata_valor(valor) -> str:
     if valor is None:
         return "null"
     if isinstance(valor, str):
+        if valor.startswith('"') or valor.startswith("'") or valor.startswith("@"):
+            return valor
         return f'"{valor}"'
     return str(valor)
 

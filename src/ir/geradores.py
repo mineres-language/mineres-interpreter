@@ -20,7 +20,7 @@ class GeradorTemp:
     def proximo(self) -> str:
         """Retorna o próximo nome de temporária disponível."""
         self.contador += 1
-        return f"@t{self.contador}"
+        return f"@_t{self.contador}"
 
     def reset(self):
         """Reinicia o contador. Útil para testes."""
