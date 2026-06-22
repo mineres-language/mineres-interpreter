@@ -1,6 +1,4 @@
-# Minerês Interpreter
-
-Este repositório contém o desenvolvimento de um interpretador para a linguagem [**Minerês**](https://mineres-language.github.io/). O objetivo desse projeto é aplicar conceitos da disciplina de **Compiladores** para construir uma infraestrutura capaz de processar, validar e executar um dialeto customizado.
+Este repositório contém o desenvolvimento de um interpretador para a linguagem [**Minerês**](https://mineres-language.github.io/). O objetivo deste projeto é aplicar conceitos da disciplina de **Compiladores** para construir uma infraestrutura capaz de processar, validar e executar um dialeto customizado.
 
 ---
 
