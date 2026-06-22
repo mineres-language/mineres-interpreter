@@ -12,16 +12,14 @@ Contém o arquivo [**`mineres.gmr`**](https://github.com/mineres-language/minere
 
 ### 2. [/input](https://github.com/mineres-language/mineres-interpreter/tree/main/data/input) (Suíte de Testes)
 Espaço destinado aos scripts escritos em Minerês (extensão `.uai`) utilizados para validar o interpretador.
-* [**`entrada.uai`**](https://github.com/mineres-language/mineres-interpreter/blob/main/data/input/entrada.uai): Script padrão consumido pelo orquestrador (`main.py`).
-* **`teste_1.uai` a `teste_5.uai`**: Casos de teste que cobrem diferentes cenários do interpretador, incluindo:
-    * Declaração de variáveis e atribuições.
-    * Estruturas de controle de fluxo (`uai_se`, `enquanto_tiver_trem`).
-    * Operações lógicas, aritméticas e relacionais.
-    * Validação de mensagens de erro sintático e léxico.
+* [**`entrada.uai`**](https://github.com/mineres-language/mineres-interpreter/blob/main/data/input/entrada.uai): Script padrão consumido pelo orquestrador (`main.py`). Edite este arquivo para testar diferentes programas.
+* [**`tests_erros.uai`**](https://github.com/mineres-language/mineres-interpreter/blob/main/data/input/tests_erros.uai): Casos organizados em três seções — erros de execução (divisão por zero, variável não declarada), erros semânticos de tipo (detectados pelo Parser), e regressões de bug (comportamentos anteriormente incorretos, agora corrigidos).
+* [**`tests_lista_codigo_intermediario.uai`**](https://github.com/mineres-language/mineres-interpreter/blob/main/data/input/tests_lista_codigo_intermediario.uai): Exercícios da lista do professor, cobrindo expressões, condicionais, laços e algoritmos clássicos (Fibonacci, fatorial, primo, palíndromo, etc.).
 
 ### 3. [`/output`](https://github.com/mineres-language/mineres-interpreter/tree/main/data/output) (Resultados do Pipeline)
 Armazena as saídas geradas após a análise do código-fonte.
-* [**`saida.uai`**](https://github.com/mineres-language/mineres-interpreter/blob/main/data/output/saida.uai): Atualmente, armazena o dump formatado da análise léxica (Tokens), permitindo verificar se o **Lexer** mapeou corretamente os lexemas, códigos, linhas e colunas.
+* [**`saida.uai`**](https://github.com/mineres-language/mineres-interpreter/blob/main/data/output/saida.uai): Dump formatado da análise léxica (lista de tokens), permitindo verificar se o **Lexer** mapeou corretamente os lexemas, códigos, linhas e colunas.
+* [**`saida_ir.uai`**](https://github.com/mineres-language/mineres-interpreter/blob/main/data/output/saida_ir.uai): Lista de tuplas do **Código Intermediário** gerado pelo Parser, no formato `(op, a, b, c)`. Útil para inspecionar o IR antes da execução na máquina virtual.
 
 ---
 

@@ -12,6 +12,7 @@ O Parser foi implementado utilizando a técnica de **Descida Recursiva** (*Recur
 * **Análise Preditiva:** Utiliza o conceito de conjuntos **First** (símbolos iniciais) para decidir qual caminho de derivação seguir sem a necessidade de retrocesso (*backtracking*).
 * **Validação de Escopo:** Garante que o código funcional esteja obrigatoriamente dentro da estrutura principal (`bora_cumpade main`).
 * **Gestão de Erros Sintáticos:** Emite alertas detalhados quando um token inesperado é encontrado, reportando o que era esperado e o que foi recebido, com a localização exata de linha e coluna.
+* **Análise Semântica de Tipos:** Durante o parsing, rastreia o tipo de cada expressão e valida as operações, emitindo erros semânticos para operações inválidas (ex: somar `string` com `int`, usar `and` com não-booleanos, divisão inteira com float).
 
 ---
 
@@ -26,32 +27,59 @@ A [gramática do Minerês](../../data/grammar/mineres.gmr) define como as "frase
 ```
 
 ### 2. Comandos de Fluxo e Controle
-Condicional: uai_se (condicao) <stmt> [uai_senao <stmt>]
+```ebnf
+<ifStmt>    ::= 'uai_se' '(' <expr> ')' <stmt> ['uai_senao' <stmt>]
 
-Repetição Enquanto: enquanto_tiver_trem (condicao) <stmt>
+<whileStmt> ::= 'enquanto_tiver_trem' '(' <expr> ')' <stmt>
 
-Repetição Para: roda_esse_trem (atrib; cond; atrib) <stmt>
+<forStmt>   ::= 'roda_esse_trem' '(' [<atrib>] ';' [<atrib>] ';' [<atrib>] ')' <stmt>
 
-Seleção: dependenu (ident) simbora { du_casu valor: <stmt> } [uai_so: <stmt>] cabo
+<caseStmt>  ::= 'dependenu' '(' IDENT ')' 'simbora'
+                    ('du_casu' <fatorZin> ':' <stmt>)*
+                    ['uai_so' ':' <stmt>]
+                'cabo'
+```
 
-# 3. Precedência de Operadores
+### 3. Precedência de Operadores
 Para garantir que a semântica matemática seja respeitada (ex: multiplicação antes da soma), o Parser implementa uma hierarquia de funções recursivas. A ordem de precedência (do menor para o maior) é:
 
-**Atribuição:** fica_assim_entao
+| Nível       | Operadores                                     | Função Parser       |
+|-------------|------------------------------------------------|---------------------|
+| Atribuição  | `fica_assim_entao`                             | `parse_atrib`       |
+| OR lógico   | `quarque_um`                                   | `parse_or`          |
+| XOR lógico  | `um_o_oto`                                     | `parse_xor`         |
+| AND lógico  | `tamem`                                        | `parse_and`         |
+| NOT lógico  | `vam_marca`                                    | `parse_not`         |
+| Relacionais | `mema_coisa`, `neh_nada`, `<`, `>`, `<=`, `>=` | `parse_rel`         |
+| Aditivos    | `+`, `-`                                       | `parse_add`         |
+| Multiplicat.| `veiz`, `sob`, `/`, `%`                        | `parse_mult`        |
+| Unários     | `+`, `-`                                       | `parse_uno`         |
+| Primários   | Identificadores, Literais, `( <expr> )`        | `parse_fatorZao`    |
 
-**Lógicos (OR, XOR, AND):** quarque_um, um_o_oto, tamem
+### 4. Análise Semântica de Tipos
 
-**Relacionais:** mema_coisa, neh_nada, <, >, <=, >=
+O Parser rastreia o tipo de cada sub-expressão e aplica regras estritamente:
 
-**Aditivos:** +, -
+| Regra                                       | Comportamento                                                                  |
+|---------------------------------------------|--------------------------------------------------------------------------------|
+| Operadores lógicos (`tamem`, `quarque_um`, `um_o_oto`) | Exigem dois `trem_discolhe`; erro caso contrário              |
+| `vam_marca` (NOT)                           | Exige operando `trem_discolhe`                                                 |
+| Operadores relacionais                      | Aceita dois numéricos (`int`/`float`) ou dois do mesmo tipo; erro caso contrário |
+| Divisão inteira `/` e módulo `%`            | Exigem dois `trem_di_numeru`; erro se um for float                             |
+| Soma de chars (`'a' + 'b'`)                 | Resultado do tipo `trem_discrita` (string concatenada)                         |
+| Coerção numérica (`int` + `float`)          | Resultado promovido automaticamente para `trem_cum_virgula`                    |
+| Atribuição com tipos incompatíveis          | Erro semântico, exceto `int → float` que é permitido                          |
+| `para_o_trem` / `toca_o_trem` fora de laço | Erro semântico fatal                                                           |
 
-**Multiplicativos:** veiz, sob, /, %
+Exemplo de feedback semântico:
 
-**Unários:** +, -, vam_marca (NOT)
+```
+[ERRO SEMÂNTICO]
+Linha: 4, Coluna: 3
+Operacao matematica invalida entre os tipos 'trem_discrita' e 'trem_di_numeru'.
+```
 
-**Primários:** Identificadores, Literais e subexpressões entre parênteses ( )
-
-### 4. Tratamento de Erros Sintáticos
+### 5. Tratamento de Erros Sintáticos
 O Parser é projetado para interromper a execução assim que uma estrutura inválida é detectada, evitando que erros se propaguem para as fases futuras do interpretador.
 
 Exemplo de feedback do sistema:
@@ -64,14 +92,22 @@ Recebi  : 'trem_di_numeru'
 Execução abortada.
 ```
 
-### 5. Principais Métodos
+### 6. Principais Métodos
 
 | Método                | Finalidade                                                                                |
 |-----------------------|-------------------------------------------------------------------------------------------|
 | `consome()`           | Valida o token atual e avança o cursor. Se o token for inválido, dispara o erro fatal.    |
 | `parse_stmtList()`    | Processa recursivamente a lista de comandos dentro de um bloco.                           |
-| `parse_atrib()`       | Gerencia a lógica de atribuição de valores a variáveis.                                   |
-| `parse_ioStmt`        | Lida com os comandos de entrada (xove) e saída (oia_proce_ve).                            |
+| `parse_declaration()` | Declara variáveis na tabela de símbolos e gera tuplas `att` de inicialização.             |
+| `parse_atrib()`       | Gerencia a lógica de atribuição de valores a variáveis, com validação de tipos.           |
+| `parse_ioStmt()`      | Lida com os comandos de entrada (`xove`) e saída (`oia_proce_ve`).                        |
+| `parse_ifStmt()`      | Gera IR para condicional `uai_se` / `uai_senao`.                                          |
+| `parse_whileStmt()`   | Gera IR para laço `enquanto_tiver_trem`.                                                  |
+| `parse_forStmt()`     | Gera IR para laço `roda_esse_trem`, com label separado para o incremento (suporte a `toca_o_trem`). |
+| `parse_caseStmt()`    | Gera IR para `dependenu`, transformando cada `du_casu` em teste de igualdade + salto.     |
+| `_validar_operacao_matematica()` | Fiscaliza operações aritméticas e retorna o tipo do resultado.              |
+| `_validar_operacao_logica()`     | Garante que operandos lógicos são booleanos.                                |
+| `_validar_operacao_relacional()` | Verifica compatibilidade de tipos em comparações.                           |
 
 ---
 

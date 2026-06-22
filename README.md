@@ -15,11 +15,13 @@ Para entender os detalhes de implementação de cada componente, acesse as docum
 1.  **[Core: Analisador Léxico (Lexer)](./docs/lexer.md)**
     * Responsável pela tokenização e reconhecimento de padrões via AFD.
 2.  **[Core: Analisador Sintático (Parser)](./docs/parser.md)**
-    * Responsável pela validação gramatical e hierarquia de expressões.
-3.  **[Infra: Recursos e Suíte de Testes (Data)](./docs/data.md)**
-    * Gerenciamento da gramática formal (.gmr) e arquivos de entrada/saída (.uai).
-4.  **[Core: Gerador de Código Intermediário (IR)](./docs/ir.md)**
-    * Responsável pela geração de tuplas de baixo nível e análise semântica.
+    * Responsável pela validação gramatical, hierarquia de expressões e análise semântica de tipos.
+3.  **[Core: Gerador de Código Intermediário (IR)](./docs/ir.md)**
+    * Responsável pela geração de tuplas de baixo nível e tabela de símbolos.
+4.  **[Core: Interpretador (Máquina Virtual)](./docs/interpreter.md)**
+    * Responsável pela execução direta do código intermediário.
+5.  **[Infra: Recursos e Suíte de Testes (Data)](./docs/data.md)**
+    * Gerenciamento da gramática formal (.gmr) e arquivos de entrada/saída `.uai`.
 
 ---
 
@@ -29,33 +31,36 @@ Para entender os detalhes de implementação de cada componente, acesse as docum
 mineres-interpreter/
 ├── data/
 │   ├── grammar/
-│   │   └── mineres.gmr       # Definição formal da gramática
-│   ├── input/                # Arquivos de teste (.uai)
-│   │   ├── entrada.uai
-│   │   └── teste_1.uai...
-│   └── output/               # Resultados do processamento
-│       ├── saida.uai         # Dump da análise léxica (tokens)
-│       └── saida_ir.uai      # Código intermediário gerado (tuplas)
-├── docs/                     # Documentação modularizada
+│   │   └── mineres.gmr          # Definição formal da gramática
+│   ├── input/                   # Arquivos de teste (.uai)
+│   │   ├── entrada.uai                          # Script padrão (editado para testar)
+│   │   ├── tests_erros.uai                      # Erros, semânticos e regressões de bug
+│   │   └── tests_lista_codigo_intermediario.uai  # Exercícios da lista do professor
+│   └── output/                  # Resultados do processamento (gerados)
+│       ├── saida.uai            # Dump da análise léxica (tokens)
+│       └── saida_ir.uai         # Código intermediário gerado (tuplas)
+├── docs/                        # Documentação modularizada
 │   ├── data.md
+│   ├── interpreter.md
 │   ├── ir.md
 │   ├── lexer.md
 │   └── parser.md
 ├── src/
-│   ├── ir/                   # Gerador de Código Intermediário
+│   ├── interpreter/             # Máquina Virtual
+│   │   └── interpreter.py
+│   ├── ir/                      # Gerador de Código Intermediário
+│   │   ├── __init__.py
+│   │   ├── formatador.py
 │   │   ├── geradores.py
-│   │   ├── tabela_simbolos.py
-│   │   └── formatador.py
-│   ├── lexer/                # Analisador Léxico
+│   │   └── tabela_simbolos.py
+│   ├── lexer/                   # Analisador Léxico
 │   │   ├── lexer.py
-│   │   ├── tokens.py
-│   │   └── README.md
-│   ├── parser/               # Analisador Sintático
-│   │   ├── parser.py
-│   │   └── README.md
-│   └── main.py               # Ponto de entrada da aplicação
+│   │   └── tokens.py
+│   ├── parser/                  # Analisador Sintático
+│   │   └── parser.py
+│   └── main.py                  # Ponto de entrada da aplicação
 ├── .gitignore
-└── README.md                 # Documentação principal
+└── README.md                    # Documentação principal
 ```
 
 ## Como Executar

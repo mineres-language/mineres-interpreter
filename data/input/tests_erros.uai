@@ -1,0 +1,174 @@
+// =============================================================================
+// TESTES DE ERROS E REGRESSÃO - tests_erros.uai
+
+// Como usar: descomente o bloco que quer testar, copie para entrada.uai e rode.
+// =============================================================================
+
+
+// =============================================================================
+// SEÇÃO 1: ERROS DE EXECUÇÃO (RUNTIME)
+// Erros esperados que a VM deve detectar e reportar de forma controlada.
+// =============================================================================
+
+// // --- Divisão inteira por zero ---
+// bora_cumpade main() simbora
+//     trem_di_numeru dinheiro uai
+//     trem_di_numeru pessoas uai
+//     trem_di_numeru divisao uai
+
+//     dinheiro fica_assim_entao 100 uai
+//     pessoas fica_assim_entao 0 uai
+
+//     oia_proce_ve("Preparando para dividir o dinheiro...") uai
+
+//     // Esperado: [ERRO INTERPRETADOR] Divisão inteira por zero.
+//     divisao fica_assim_entao dinheiro / pessoas uai
+
+//     oia_proce_ve("Isso nunca sera impresso!") uai
+// cabo
+
+// // --- Módulo por zero ---
+// bora_cumpade main() simbora
+//     trem_di_numeru valor uai
+//     trem_di_numeru resto uai
+
+//     valor fica_assim_entao 10 uai
+
+//     oia_proce_ve("Calculando o resto...") uai
+//     // Esperado: [ERRO INTERPRETADOR] Módulo (resto) por zero.
+//     resto fica_assim_entao valor % 0 uai
+// cabo
+
+// // --- Variável não declarada ---
+// bora_cumpade main() simbora
+//     trem_di_numeru a uai
+
+//     a fica_assim_entao 10 uai
+
+//     // Esperado: [ERRO SEMÂNTICO] Variável 'resultado' usada sem ter sido declarada.
+//     resultado fica_assim_entao a + 5 uai
+// cabo
+
+
+// =============================================================================
+// SEÇÃO 2: ERROS SEMÂNTICOS (TIPOS)
+// Erros detectados pelo Parser antes de chegar na VM.
+// =============================================================================
+
+// // --- Atribuição de tipos incompatíveis ---
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     trem_discrita s uai
+
+//     s fica_assim_entao "texto" uai
+//     // Esperado: [ERRO SEMÂNTICO] Tipos incompativeis na atribuição.
+//     x fica_assim_entao s uai
+// cabo
+
+// // --- Operação aritmética entre tipos incompatíveis ---
+// bora_cumpade main() simbora
+//     trem_di_numeru a uai
+//     trem_discrita b uai
+
+//     a fica_assim_entao 10 uai
+//     b fica_assim_entao "olá" uai
+
+//     trem_di_numeru c uai
+//     // Esperado: [ERRO SEMÂNTICO] Operacao matematica invalida entre os tipos 'trem_di_numeru' e 'trem_discrita'.
+//     c fica_assim_entao a + b uai
+// cabo
+
+// // --- Operador lógico com não-booleanos ---
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     trem_di_numeru y uai
+//     trem_discolhe resultado uai
+
+//     x fica_assim_entao 1 uai
+//     y fica_assim_entao 0 uai
+
+//     // Esperado: [ERRO SEMÂNTICO] A operacao 'tamem' exige dois valores do tipo 'trem_discolhe'.
+//     resultado fica_assim_entao x tamem y uai
+// cabo
+
+// // --- Divisão inteira com float ---
+// bora_cumpade main() simbora
+//     trem_cum_virgula a uai
+//     trem_di_numeru b uai
+//     trem_di_numeru c uai
+
+//     a fica_assim_entao 10.5 uai
+//     b fica_assim_entao 2 uai
+
+//     // Esperado: [ERRO SEMÂNTICO] A divisão inteira ('/') e o módulo ('%') exigem dois números inteiros.
+//     c fica_assim_entao a / b uai
+// cabo
+
+
+// =============================================================================
+// SEÇÃO 3: REGRESSÕES DE BUG (BUGS CORRIGIDOS)
+// Estes casos reproduzem bugs que já foram corrigidos.
+// Todos devem FUNCIONAR corretamente — se voltarem a falhar, algo regrediu.
+// =============================================================================
+
+// // --- BUG: Conflito entre variável de usuário 't1' e temporária ---
+// // CORRIGIDO: temporárias agora usam prefixo '@_t' (ex: @_t1), nunca conflitam com usuário.
+// // Esperado: imprime 10 (valor de t1, não sobrescrito).
+// bora_cumpade main() simbora
+//     trem_di_numeru t1 uai
+//     t1 fica_assim_entao 10 uai
+
+//     trem_di_numeru a, b, c uai
+//     a fica_assim_entao 5 uai
+//     b fica_assim_entao 2 uai
+//     c fica_assim_entao a + b uai
+
+//     oia_proce_ve(t1) uai
+// cabo
+
+// // --- BUG: Operadores lógicos com "eh"/"num_eh" tratados como strings Python ---
+// // CORRIGIDO: o interpretador converte "eh" → True e "num_eh" → False antes da operação.
+// // Esperado: imprime False (eh tamem num_eh = true AND false = false).
+// bora_cumpade main() simbora
+//     trem_discolhe bool_a, bool_b, bool_c uai
+
+//     bool_a fica_assim_entao eh uai
+//     bool_b fica_assim_entao num_eh uai
+//     bool_c fica_assim_entao bool_a tamem bool_b uai
+
+//     oia_proce_ve("Resultado de eh tamem num_eh (esperado: False): ") uai
+//     oia_proce_ve(bool_c) uai
+// cabo
+
+// // --- BUG: Ponto e vírgula ';' causava erro sintático ---
+// // CORRIGIDO: ';' é tratado como instrução vazia (DEL_PONTO_VIRGULA), igual ao 'uai'.
+// // Esperado: imprime 10 normalmente.
+// bora_cumpade main() simbora
+//     trem_di_numeru a uai
+//     a fica_assim_entao 10 uai
+//     ;
+//     oia_proce_ve(a) uai
+// cabo
+
+// // --- BUG: String com aspas internas impressa incorretamente ---
+// // CORRIGIDO: a lógica de remoção de aspas no print opera apenas nas aspas externas do IR.
+// // Esperado: imprime  "alou"  (com as aspas literais).
+// bora_cumpade main() simbora
+//     trem_discrita msg uai
+//     msg fica_assim_entao "\"alou\"" uai
+//     oia_proce_ve(msg) uai
+// cabo
+
+// // --- BUG: String literal começando com '@' interpretada como variável ---
+// // CORRIGIDO: strings literais são sempre envolvidas em aspas no IR (ex: '"@nome"'),
+// // então obter_valor nunca as confunde com referências de variável.
+// // Esperado: imprime  @nome  (texto literal, não o valor da variável nome).
+// bora_cumpade main() simbora
+//     trem_discrita nome uai
+//     nome fica_assim_entao "teste" uai
+//
+//     trem_discrita msg uai
+//     msg fica_assim_entao "@nome" uai
+//
+//     oia_proce_ve(msg) uai
+// cabo
