@@ -1,18 +1,8 @@
-"""
-Geradores de nomes únicos para variáveis temporárias e labels.
-
-Estes geradores são usados durante a geração de código intermediário
-para criar identificadores que não conflitam com variáveis do programa.
-"""
+"""Geradores de nomes únicos para temporárias (@_t1, @_t2, ...) e labels (L1, L2, ...)."""
 
 
 class GeradorTemp:
-    """
-    Gera nomes de variáveis temporárias no formato t1, t2, t3, ...
-
-    Usado para armazenar resultados intermediários de expressões.
-    Exemplo: a + b * c gera duas temporárias (uma pra b*c e outra pra a+t1).
-    """
+    """Gera variáveis temporárias para resultados intermediários de expressões."""
 
     def __init__(self):
         self.contador = 0
@@ -28,12 +18,7 @@ class GeradorTemp:
 
 
 class GeradorLabel:
-    """
-    Gera nomes de labels no formato L1, L2, L3, ...
-
-    Usado para marcar pontos de salto no código intermediário
-    (início de loops, ramos de if/else, fim de blocos, etc.).
-    """
+    """Gera labels para pontos de salto (if/else, loops, etc.)."""
 
     def __init__(self):
         self.contador = 0

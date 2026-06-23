@@ -1,15 +1,4 @@
-"""
-Tabela de Símbolos.
-
-Mantém o registro de todas as variáveis declaradas no programa,
-seus tipos, e fornece a base para análise semântica:
-    - Detecção de variável não declarada
-    - Detecção de redeclaração
-    - Inferência de valor inicial padrão por tipo
-
-Como o Minerês só tem a função 'main' (sem funções aninhadas),
-usamos uma tabela única e plana, sem aninhamento de escopos.
-"""
+"""Tabela de Símbolos - registra variáveis declaradas e detecta erros semânticos."""
 
 import sys
 from lexer.tokens import (
@@ -18,18 +7,17 @@ from lexer.tokens import (
 )
 
 
-# Mapeamento de tipo → valor inicial padrão.
-# Quando uma variável é declarada sem inicialização, ela recebe esse valor.
+# Valor padrão atribuído a variáveis declaradas sem inicialização.
 VALOR_INICIAL_PADRAO = {
-    PR_TREM_DI_NUMERU:   0,       # int
-    PR_TREM_CUM_VIRGULA: 0.0,     # float
-    PR_TREM_DISCRITA:    "",      # string
-    PR_TREM_DISCOLHE:    "num_eh", # bool (false, padrão C/Java)
-    PR_TROSSO:           "\\0",   # char (caractere nulo)
+    PR_TREM_DI_NUMERU:   0,        # int
+    PR_TREM_CUM_VIRGULA: 0.0,      # float
+    PR_TREM_DISCRITA:    "",       # string
+    PR_TREM_DISCOLHE:    "num_eh", # bool (false, padrão C)
+    PR_TROSSO:           "\\0",    # char (caractere nulo)
 }
 
 
-# Mapeamento de tipo → nome legível (para mensagens de erro)
+# Nome legível de cada tipo para mensagens de erro.
 NOME_DO_TIPO = {
     PR_TREM_DI_NUMERU:   "trem_di_numeru",
     PR_TREM_CUM_VIRGULA: "trem_cum_virgula",
@@ -40,26 +28,12 @@ NOME_DO_TIPO = {
 
 
 class TabelaSimbolos:
-    """
-    Armazena variáveis declaradas e seus metadados.
-
-    Cada entrada é um dicionário com:
-        {
-            "tipo": código numérico do tipo (PR_TREM_DI_NUMERU, etc.),
-            "linha": linha onde foi declarada (para mensagens de erro),
-            "coluna": coluna onde foi declarada,
-        }
-    """
 
     def __init__(self):
         self.simbolos = {}
 
     def declarar(self, nome: str, tipo: int, linha: int, coluna: int):
-        """
-        Registra uma nova variável.
-
-        Levanta erro fatal se a variável já estiver declarada.
-        """
+        """Registra uma nova variável; erro fatal se já declarada."""
         if nome in self.simbolos:
             decl_anterior = self.simbolos[nome]
             self._erro(
@@ -84,11 +58,7 @@ class TabelaSimbolos:
         return info["tipo"] if info else None
 
     def verificar_uso(self, nome: str, linha: int, coluna: int):
-        """
-        Garante que a variável foi declarada antes de ser usada.
-
-        Levanta erro fatal se não foi.
-        """
+        """Erro fatal se a variável não foi declarada."""
         if not self.existe(nome):
             self._erro(
                 f"Variável '{nome}' usada sem ter sido declarada.",

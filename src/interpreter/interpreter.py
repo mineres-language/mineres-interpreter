@@ -14,17 +14,13 @@ class Interpretador:
         self.ip = 0 
 
     def disparar_erro(self, mensagem: str):
-        """ Interrompe a execução exibindo um erro semântico amigável. """
         print(f"\n[ERRO INTERPRETADOR]\nFalha na instrução {self.ip}")
         print(f"Detalhe: {mensagem}")
         print("Execução da Máquina Virtual abortada.\n")
         sys.exit(1)
 
     def mapear_labels(self):
-        """ 
-        Passo 2: Pré-processamento. 
-        Varre o código salvando o índice (linha) de cada Label antes da execução real.
-        """
+        """Pré-processamento: salva o índice de cada label antes de executar."""
         for i, instrucao in enumerate(self.codigo):
             op = instrucao[0]
             if op == "label":
@@ -32,10 +28,7 @@ class Interpretador:
                 self.labels[nome_label] = i
 
     def obter_valor(self, operando):
-        """ 
-        Busca o valor real de um operando. 
-        Se for o nome de uma variável, busca na memória. Se for literal, retorna direto.
-        """
+        """Busca valor real de um operando: busca na memória se for variável, retorna direto se for literal."""
         if operando is None or operando == "null":
             return None
             
@@ -53,11 +46,11 @@ class Interpretador:
         return operando
 
     def executar(self):
-        """ O laço principal da Máquina Virtual. """
         if not self.codigo:
             print("Nenhum código intermediário para executar.")
             return
 
+        # 1. Prepara as rotas de salto
         self.mapear_labels()
 
         print("" + "="*40)

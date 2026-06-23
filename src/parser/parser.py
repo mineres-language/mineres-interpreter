@@ -70,7 +70,7 @@ class Parser:
         sys.exit(1)
 
     def consome(self, codigo_esperado: int):
-        # recebe apenas o código, o nome do erro é buscado
+        # verifica se o token atual é o que a gramática exige
         atual = self.token_atual()
         
         if atual[1] == codigo_esperado:
@@ -265,10 +265,6 @@ class Parser:
     def parse_out(self) -> list:
         """
         <out> -> <fatorZin>
-
-        Gera tupla de print apropriada:
-          - Se for variável: (call, print, var, null)
-          - Se for literal:  (call, print, null, valor)
         """
         codigo, lugar, eh_variavel, _ = self.parse_fatorZin_com_info()
 
@@ -293,19 +289,7 @@ class Parser:
     # -------------------------------------------------------------------------
 
     def parse_ifStmt(self) -> list:
-        """
-        <ifStmt> -> 'uai_se' '(' <expr> ')' <stmt> <elsePart> ;
-
-        Estrutura do IR gerado:
-            ... código da condição ...
-            (if, t_cond, L_then, L_else)
-            (label, L_then, null, null)
-            ... corpo do then ...
-            (jump, L_fim, null, null)
-            (label, L_else, null, null)
-            ... corpo do else (vazio se não houver) ...
-            (label, L_fim, null, null)
-        """
+        """ <ifStmt> -> 'uai_se' '(' <expr> ')' <stmt> <elsePart> """
         self.consome(PR_UAI_SE)
         self.consome(DEL_ABRE_PAR)
         cod_cond, lugar_cond, _ = self.parse_expr()
@@ -334,18 +318,7 @@ class Parser:
         return []
 
     def parse_whileStmt(self) -> list:
-        """
-        <whileStmt> -> 'enquanto_tiver_trem' '(' <expr> ')' <stmt>
-
-        Estrutura do IR gerado:
-            (label, L_inicio, null, null)
-            ... código da condição ...
-            (if, t_cond, L_corpo, L_fim)
-            (label, L_corpo, null, null)
-            ... corpo ...
-            (jump, L_inicio, null, null)
-            (label, L_fim, null, null)
-        """
+        """ <whileStmt> -> 'enquanto_tiver_trem' '(' <expr> ')' <stmt> """
         self.consome(PR_ENQUANTO)
         self.consome(DEL_ABRE_PAR)
 
@@ -374,21 +347,7 @@ class Parser:
         return codigo
 
     def parse_forStmt(self) -> list:
-        """
-        <forStmt> -> 'roda_esse_trem' '(' <optExpr> ';' <optExpr> ';' <optExpr> ')' <stmt> ;
-
-        Estrutura do IR gerado:
-            ... código de inicialização ...
-            (label, L_cond, null, null)
-            ... código da condição ...
-            (if, t_cond, L_corpo, L_fim)
-            (label, L_corpo, null, null)
-            ... corpo ...
-            (label, L_incr, null, null)        <- continue salta para cá
-            ... código do incremento ...
-            (jump, L_cond, null, null)
-            (label, L_fim, null, null)
-        """
+        """ <forStmt> -> 'roda_esse_trem' '(' <optExpr> ';' <optExpr> ';' <optExpr> ')' <stmt> """
         self.consome(PR_RODA_ESSE_TREM)
         self.consome(DEL_ABRE_PAR)
 
@@ -574,22 +533,12 @@ class Parser:
         return self.parse_atrib()
 
     def parse_atrib(self) -> tuple:
-        """
-        <atrib> -> <or> <restoAtrib> ;
-
-        Atribuição é tratada como expressão. Se for atribuição,
-        gera (att, var, valor, null) e retorna a variável como lugar.
-        """
+        """ <atrib> -> <or> <restoAtrib> """
         cod_esq, lugar_esq, tipo_esq = self.parse_or()
         return self.parse_restoAtrib(cod_esq, lugar_esq, tipo_esq)
 
     def parse_restoAtrib(self, cod_esq: list, lugar_esq: str, tipo_esq: int) -> tuple:
-        """
-        <restoAtrib> -> 'fica_assim_entao' <atrib> | & ;
-
-        Aqui validamos que o lado esquerdo da atribuição é uma variável
-        declarada. Se for uma expressão complexa ou literal, é erro semântico.
-        """
+        """ <restoAtrib> -> 'fica_assim_entao' <atrib> | & """
         if self.token_atual()[1] == OP_FICA_ASSIM_ENTAO:
             tk = self.token_atual()
             self.consome(OP_FICA_ASSIM_ENTAO)
@@ -625,13 +574,7 @@ class Parser:
         return cod_esq, lugar_esq, tipo_esq
 
     def _eh_identificador_simples(self, lugar: str) -> bool:
-        """
-        Retorna True se 'lugar' é um identificador válido (não temporária,
-        não literal). Identificadores começam com letra ou underscore.
-        Temporárias começam com 't' seguido de dígitos — mas isso colide
-        com identificadores começando com 't', então usamos a tabela:
-        é identificador simples se a string ESTIVER na tabela de símbolos.
-        """
+        # usa a tabela em vez de heurística de prefixo, pois 't1' pode ser variável do usuário
         if isinstance(lugar, str) and lugar.startswith('@'):
             nome_real = lugar[1:]
             return self.tabela.existe(nome_real)
@@ -837,20 +780,17 @@ class Parser:
         """ <restoAdd> -> ('+'|'-') <mult> <restoAdd> | & """
         atual = self.token_atual()[1]
         if atual in {OP_MAIS, OP_MENOS}:
-            tk_op = self.token_atual() # Captura o token para saber a linha/coluna
+            tk_op = self.token_atual()
             op = OP_PARA_IR[atual]
             self.consome(atual)
             
             cod_dir, lugar_dir, tipo_dir = self.parse_mult()
             
-            # Chama o fiscal para auditar a conta e descobrir o tipo do resultado
             tipo_resultado = self._validar_operacao_matematica(tk_op[1], tipo_esq, tipo_dir, tk_op)
 
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append((op, t, lugar_esq, lugar_dir))
-            
-            # Repassa o tipo validado adiante
             return self.parse_restoAdd(codigo, t, tipo_resultado)
             
         return cod_esq, lugar_esq, tipo_esq
@@ -864,31 +804,22 @@ class Parser:
         """ <restoMult> -> ('veiz'|'sob'|'/'|'%') <uno> <restoMult> | & """
         atual = self.token_atual()[1]
         if atual in {OP_VEIZ, OP_SOB, OP_DIVISAO_INT, OP_MODULO}:
-            tk_op = self.token_atual() # Captura o token
+            tk_op = self.token_atual()
             op = OP_PARA_IR[atual]
             self.consome(atual)
             
             cod_dir, lugar_dir, tipo_dir = self.parse_uno()
-            
-            # Chama o fiscal para auditar a conta e descobrir o tipo do resultado
             tipo_resultado = self._validar_operacao_matematica(tk_op[1], tipo_esq, tipo_dir, tk_op)
 
             t = self.gerador_temp.proximo()
             codigo = list(cod_esq) + list(cod_dir)
             codigo.append((op, t, lugar_esq, lugar_dir))
-            
-            # Repassa o tipo validado adiante
             return self.parse_restoMult(codigo, t, tipo_resultado)
             
         return cod_esq, lugar_esq, tipo_esq
 
     def parse_uno(self) -> tuple:
-        """
-        <uno> -> '+' <uno> | '-' <uno> | <fatorZao>
-
-        Operadores unários geram tupla no formato:
-            (uno, "+", res, op)   ou   (uno, "-", res, op)
-        """
+        """ <uno> -> '+' <uno> | '-' <uno> | <fatorZao> """
         atual = self.token_atual()[1]
         if atual in {OP_MAIS, OP_MENOS}:
             sinal = "+" if atual == OP_MAIS else "-"
@@ -922,22 +853,12 @@ class Parser:
         return cod, lugar, tipo
 
     def parse_fatorZin(self) -> tuple:
-        """
-        <fatorZin> -> 'STR' | 'IDENT' | 'NUMint' | ... | 'valorBooleano' | 'valorChar'
-
-        Retorna (lista_codigo, lugar).
-        """
+        """ <fatorZin> -> 'STR' | 'IDENT' | 'NUMint' | ... | 'valorBooleano' | 'valorChar' """
         cod, lugar, _, tipo = self.parse_fatorZin_com_info()
         return cod, lugar, tipo
 
     def parse_fatorZin_com_info(self) -> tuple:
-        """
-        Versão estendida que também retorna se o resultado é uma variável.
-
-        Retorno: (lista_codigo, lugar, eh_variavel)
-            eh_variavel é True se for um IDENTIFICADOR (variável do programa)
-            e False se for um literal (string, número, char, booleano).
-        """
+        """Retorna (codigo, lugar, eh_variavel, tipo). eh_variavel distingue IDENT de literal."""
         tk = self.token_atual()
         codigo_token, codigo, linha, coluna = tk[0], tk[1], tk[2], tk[3]
 
@@ -984,10 +905,7 @@ class Parser:
     # =========================================================================
 
     def iniciar(self) -> list:
-        """
-        Inicia o parsing e retorna a lista de tuplas do código intermediário.
-        Retorna lista vazia se não houver tokens.
-        """
+        """Ponto de entrada: retorna a lista de tuplas do código intermediário."""
         if self.tamanho == 0:
             print("Nenhum token para analisar.")
             return []
