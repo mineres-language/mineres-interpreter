@@ -1,5 +1,6 @@
 [
-	("att", @a, 0, null),
-	("att", @a, 10, null),
-	("call", "print", @a, null)
+	("att", @mensagem, "", null),
+	("att", @mensagem, "Uai, mundo!
+", null),
+	("call", "print", @mensagem, null)
 ]
