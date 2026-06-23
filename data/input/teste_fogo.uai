@@ -1,0 +1,463 @@
+// =============================================================================
+// TESTE FOGO - Todos os testes que quebram o programa
+//
+// Como usar: descomente um bloco por vez, copie para entrada.uai e rode.
+// Cada bloco tem: descrição do problema, resultado esperado e resultado real.
+// =============================================================================
+
+
+// =============================================================================
+// SEÇÃO 1: ERROS DE EXECUÇÃO (RUNTIME)
+// A VM detecta e reporta — mas precisam ser testados para garantir que
+// o caminho de erro está correto e a mensagem é legível.
+// =============================================================================
+
+// // --- Divisão inteira por zero ---
+// // Esperado: [ERRO INTERPRETADOR] Divisão inteira por zero.
+// bora_cumpade main() simbora
+//     trem_di_numeru dinheiro, pessoas, divisao uai
+//     dinheiro fica_assim_entao 100 uai
+//     pessoas fica_assim_entao 0 uai
+//     divisao fica_assim_entao dinheiro / pessoas uai
+//     oia_proce_ve("Isso nunca sera impresso!") uai
+// cabo
+
+// // --- Divisão real (sob) por zero ---
+// // Esperado: [ERRO INTERPRETADOR] Divisão real por zero.
+// bora_cumpade main() simbora
+//     trem_cum_virgula a uai
+//     a fica_assim_entao 5.0 sob 0.0 uai
+//     oia_proce_ve(a) uai
+// cabo
+
+// // --- Módulo por zero ---
+// // Esperado: [ERRO INTERPRETADOR] Módulo (resto) por zero.
+// bora_cumpade main() simbora
+//     trem_di_numeru valor, resto uai
+//     valor fica_assim_entao 10 uai
+//     resto fica_assim_entao valor % 0 uai
+// cabo
+
+// // --- Variável usada sem ter sido declarada ---
+// // Esperado: [ERRO SEMÂNTICO] Variável 'resultado' usada sem ter sido declarada.
+// bora_cumpade main() simbora
+//     trem_di_numeru a uai
+//     a fica_assim_entao 10 uai
+//     resultado fica_assim_entao a + 5 uai
+// cabo
+
+// // --- para_o_trem fora de laço ---
+// // Esperado: [ERRO SEMÂNTICO] 'para_o_trem' usado fora de um laço.
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     para_o_trem uai
+// cabo
+
+// // --- toca_o_trem fora de laço ---
+// // Esperado: [ERRO SEMÂNTICO] 'toca_o_trem' usado fora de um laço.
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     toca_o_trem uai
+// cabo
+
+
+// =============================================================================
+// SEÇÃO 2: ERROS SEMÂNTICOS (TIPOS)
+// Detectados pelo Parser antes de chegar na VM.
+// =============================================================================
+
+// // --- Atribuição de tipos incompatíveis (string → int) ---
+// // Esperado: [ERRO SEMÂNTICO] Tipos incompativeis na atribuição.
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     trem_discrita s uai
+//     s fica_assim_entao "texto" uai
+//     x fica_assim_entao s uai
+// cabo
+
+// // --- Atribuição de float para int (proibida) ---
+// // Esperado: [ERRO SEMÂNTICO] (só int→float é permitido, não float→int)
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     x fica_assim_entao 3.14 uai
+// cabo
+
+// // --- Operação aritmética entre tipos incompatíveis (int + string) ---
+// // Esperado: [ERRO SEMÂNTICO] Operacao matematica invalida entre os tipos 'trem_di_numeru' e 'trem_discrita'.
+// bora_cumpade main() simbora
+//     trem_di_numeru a uai
+//     trem_discrita b uai
+//     trem_di_numeru c uai
+//     a fica_assim_entao 10 uai
+//     b fica_assim_entao "ola" uai
+//     c fica_assim_entao a + b uai
+// cabo
+
+// // --- Operador lógico (tamem) com não-booleanos ---
+// // Esperado: [ERRO SEMÂNTICO] A operacao 'tamem' exige dois valores do tipo 'trem_discolhe'.
+// bora_cumpade main() simbora
+//     trem_di_numeru x, y uai
+//     trem_discolhe r uai
+//     x fica_assim_entao 1 uai
+//     y fica_assim_entao 0 uai
+//     r fica_assim_entao x tamem y uai
+// cabo
+
+// // --- Divisão inteira (/) com float no operando ---
+// // Esperado: [ERRO SEMÂNTICO] A divisão inteira ('/') e o módulo ('%') exigem dois números inteiros.
+// bora_cumpade main() simbora
+//     trem_cum_virgula a uai
+//     trem_di_numeru b, c uai
+//     a fica_assim_entao 10.5 uai
+//     b fica_assim_entao 2 uai
+//     c fica_assim_entao a / b uai
+// cabo
+
+// // --- Redeclaração de variável ---
+// // Esperado: [ERRO SEMÂNTICO] Variável 'x' já foi declarada anteriormente.
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     trem_di_numeru x uai
+// cabo
+
+// // --- Redeclaração dentro da mesma lista ---
+// // Esperado: [ERRO SEMÂNTICO] Variável 'x' já foi declarada anteriormente.
+// bora_cumpade main() simbora
+//     trem_di_numeru x, x uai
+// cabo
+
+
+// =============================================================================
+// SEÇÃO 3: REGRESSÕES DE BUG (BUGS JÁ CORRIGIDOS — não devem voltar)
+// =============================================================================
+
+// // --- Conflito entre variável de usuário 't1' e temporária ---
+// // Esperado: imprime 10 (valor de t1, não sobrescrito pela temporária).
+// bora_cumpade main() simbora
+//     trem_di_numeru t1 uai
+//     t1 fica_assim_entao 10 uai
+//     trem_di_numeru a, b, c uai
+//     a fica_assim_entao 5 uai
+//     b fica_assim_entao 2 uai
+//     c fica_assim_entao a + b uai
+//     oia_proce_ve(t1) uai
+// cabo
+
+// // --- Operadores lógicos com "eh"/"num_eh" como strings Python ---
+// // Esperado: imprime False (eh tamem num_eh = true AND false = false).
+// bora_cumpade main() simbora
+//     trem_discolhe bool_a, bool_b, bool_c uai
+//     bool_a fica_assim_entao eh uai
+//     bool_b fica_assim_entao num_eh uai
+//     bool_c fica_assim_entao bool_a tamem bool_b uai
+//     oia_proce_ve(bool_c) uai
+// cabo
+
+// // --- Ponto e vírgula ';' isolado como statement ---
+// // Esperado: imprime 10 normalmente (sem erro sintático).
+// bora_cumpade main() simbora
+//     trem_di_numeru a uai
+//     a fica_assim_entao 10 uai
+//     ;
+//     oia_proce_ve(a) uai
+// cabo
+
+// // --- String com aspas internas escapadas ---
+// // Esperado: imprime  "alou"  (com as aspas literais visíveis).
+// bora_cumpade main() simbora
+//     trem_discrita msg uai
+//     msg fica_assim_entao "\"alou\"" uai
+//     oia_proce_ve(msg) uai
+// cabo
+
+// // --- String literal começando com '@' não deve ser tratada como variável ---
+// // Esperado: imprime  @nome  (texto literal, não o valor da variável nome).
+// bora_cumpade main() simbora
+//     trem_discrita nome uai
+//     nome fica_assim_entao "teste" uai
+//     trem_discrita msg uai
+//     msg fica_assim_entao "@nome" uai
+//     oia_proce_ve(msg) uai
+// cabo
+
+
+// =============================================================================
+// SEÇÃO 4: BUGS CONHECIDOS — SAÍDA ERRADA (não crasham, resultado silencioso errado)
+// =============================================================================
+
+// // --- BUG #1: 'sob' int/int retorna float — tipo semântico diz int, runtime guarda float ---
+// // _validar_operacao_matematica retorna PR_TREM_DI_NUMERU para sob int/int,
+// // mas o interpretador faz v1 / v2 (Python float division).
+// // Esperado: 2 (se 'sob' for div inteira) ou 2.5 explicitamente tipado como float
+// // Resultado real: 2.5 guardado numa variável de tipo trem_di_numeru
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     x fica_assim_entao 5 sob 2 uai
+//     oia_proce_ve(x) uai
+// cabo
+
+// // --- BUG #1b: float contaminado pela 'sob' quebra divisão inteira posterior ---
+// // c recebe 2.5 (float) mesmo sendo trem_di_numeru. Depois, 10 / c = 10 // 2.5 = 4.0.
+// // Esperado: 4
+// // Resultado real: 4.0
+// bora_cumpade main() simbora
+//     trem_di_numeru a, b, c, d uai
+//     a fica_assim_entao 10 uai
+//     b fica_assim_entao 4 uai
+//     c fica_assim_entao a sob b uai
+//     d fica_assim_entao 10 / c uai
+//     oia_proce_ve(d) uai
+// cabo
+
+// // --- BUG #2: booleans computados imprimem True/False em vez de eh/num_eh ---
+// // Ops 'tamem', 'quarque_um', 'um_o_oto' e relacionais retornam bool Python.
+// // Esperado: num_eh
+// // Resultado real: False
+// bora_cumpade main() simbora
+//     trem_discolhe a, b, c uai
+//     a fica_assim_entao eh uai
+//     b fica_assim_entao num_eh uai
+//     c fica_assim_entao a tamem b uai
+//     oia_proce_ve(c) uai
+// cabo
+
+// // --- BUG #2b: inconsistência entre bool literal e bool computado na saída ---
+// // b (atribuído diretamente) imprime "eh", c (via tamem) imprime "True".
+// // Esperado: eh  /  eh
+// // Resultado real: eh  /  True
+// bora_cumpade main() simbora
+//     trem_discolhe b, c uai
+//     b fica_assim_entao eh uai
+//     c fica_assim_entao b tamem eh uai
+//     oia_proce_ve(b) uai
+//     oia_proce_ve(c) uai
+// cabo
+
+// // --- BUG #3: concatenação de chars produz aspas simples no resultado ---
+// // lugar de char no IR é "'a'" (3 chars com aspas). Python concatena incluindo aspas.
+// // Esperado: ab
+// // Resultado real: 'a''b'
+// bora_cumpade main() simbora
+//     trem_discrita s uai
+//     s fica_assim_entao 'a' + 'b' uai
+//     oia_proce_ve(s) uai
+// cabo
+
+// // --- BUG #4: 'vam_marca' preserva tipo do operando em vez de retornar trem_discolhe ---
+// // parse_not devolve 'tipo' original. NOT de int tem tipo int, atribuição a bool falha.
+// // Esperado: funcionar, imprimir num_eh (not 5 = false)
+// // Resultado real: [ERRO SEMÂNTICO] tipo incompatível na atribuição
+// bora_cumpade main() simbora
+//     trem_di_numeru n uai
+//     trem_discolhe b uai
+//     n fica_assim_entao 5 uai
+//     b fica_assim_entao vam_marca n uai
+//     oia_proce_ve(b) uai
+// cabo
+
+// // --- BUG #4b: dois 'vam_marca' em cadeia com int rejeita na hora do 'tamem' ---
+// // Esperado: funcionar (not a tamem not b → bool tamem bool)
+// // Resultado real: [ERRO SEMÂNTICO] operação 'tamem' exige trem_discolhe
+// bora_cumpade main() simbora
+//     trem_di_numeru a, b uai
+//     trem_discolhe r uai
+//     a fica_assim_entao 1 uai
+//     b fica_assim_entao 0 uai
+//     r fica_assim_entao vam_marca a tamem vam_marca b uai
+//     oia_proce_ve(r) uai
+// cabo
+
+
+// =============================================================================
+// SEÇÃO 5: BUGS CONHECIDOS — CRASH NO RUNTIME (passam semântica, explodem na VM)
+// =============================================================================
+
+// // --- BUG #5: operador unário '-' em string passa semântica e explode na VM ---
+// // parse_uno não valida o tipo. VM tenta -"hello" → TypeError capturado.
+// // Esperado: [ERRO SEMÂNTICO] antes de chegar na VM
+// // Resultado real: [ERRO INTERPRETADOR] Erro de tipo em tempo de execução
+// bora_cumpade main() simbora
+//     trem_discrita s uai
+//     s fica_assim_entao "hello" uai
+//     trem_discrita t uai
+//     t fica_assim_entao -s uai
+//     oia_proce_ve(t) uai
+// cabo
+
+// // --- BUG #5b: operador unário '-' em trem_discolhe passa semântica e explode ---
+// // Esperado: [ERRO SEMÂNTICO]
+// // Resultado real: [ERRO INTERPRETADOR] Erro de tipo em tempo de execução
+// bora_cumpade main() simbora
+//     trem_discolhe b uai
+//     b fica_assim_entao eh uai
+//     trem_discolhe r uai
+//     r fica_assim_entao -b uai
+//     oia_proce_ve(r) uai
+// cabo
+
+// // --- BUG #10: comparar bool literal com bool computado via '<' crasheia na VM ---
+// // Bool literal é a string "eh"/"num_eh". Bool computado (via tamem/relacionais) é
+// // Python True/False. Em Python 3, comparar str < bool lança TypeError.
+// // Esperado: [ERRO SEMÂNTICO] (comparação < entre booleans deveria ser proibida)
+// // Resultado real: [ERRO INTERPRETADOR] Erro de tipo em tempo de execução
+// bora_cumpade main() simbora
+//     trem_discolhe a, b, c, r uai
+//     trem_di_numeru x, y uai
+//     a fica_assim_entao eh uai
+//     x fica_assim_entao 5 uai
+//     y fica_assim_entao 3 uai
+//     b fica_assim_entao x > y uai
+//     r fica_assim_entao a < b uai
+//     oia_proce_ve(r) uai
+// cabo
+
+// // --- BUG #11: xove lendo texto em variável int guarda silenciosamente, explode depois ---
+// // int("ola") e float("ola") falham, n recebe a string "ola" sem nenhum aviso.
+// // Quando n é usado em aritmética, a VM explode com TypeError.
+// // (Digite "ola" quando o programa pedir entrada)
+// // Esperado: [ERRO INTERPRETADOR] no momento da leitura
+// // Resultado real: erro silencioso na leitura; [ERRO INTERPRETADOR] só na soma
+// bora_cumpade main() simbora
+//     trem_di_numeru n, dobro uai
+//     xove(trem_di_numeru, n) uai
+//     dobro fica_assim_entao n + n uai
+//     oia_proce_ve(dobro) uai
+// cabo
+
+// // --- BUG #12: xove lendo float em variável int contamina divisão inteira posterior ---
+// // int("3.5") falha, float("3.5") = 3.5 é guardado em variável trem_di_numeru.
+// // Depois, n % 10 com n=3.5 dá 3.5 (float) e n / 10 dá 0.0 em vez de 0.
+// // (Digite "3.5" quando o programa pedir entrada)
+// // Esperado: loop termina com soma dos dígitos correto
+// // Resultado real: resultados com vírgula (float), loop pode não terminar se n nunca chegar a 0
+// bora_cumpade main() simbora
+//     trem_di_numeru n, soma, digito uai
+//     xove(trem_di_numeru, n) uai
+//     soma fica_assim_entao 0 uai
+//     enquanto_tiver_trem (n > 0)
+//     simbora
+//         digito fica_assim_entao n % 10 uai
+//         soma fica_assim_entao soma + digito uai
+//         n fica_assim_entao n / 10 uai
+//     cabo
+//     oia_proce_ve(soma) uai
+// cabo
+
+
+// =============================================================================
+// SEÇÃO 6: BUGS CONHECIDOS — CRASH NO PARSER (erros sintáticos inesperados)
+// =============================================================================
+
+// // --- BUG #6: dependenu com apenas uai_so (sem du_casu) causa erro sintático ---
+// // parse_dosCasos chama parse_doCaso incondicionalmente, que exige 'du_casu'.
+// // Esperado: imprimir "default"
+// // Resultado real: [ERRO SINTÁTICO] esperava 'du_casu', recebi 'uai_so'
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     x fica_assim_entao 1 uai
+//     dependenu(x) simbora
+//         uai_so: oia_proce_ve("default") uai
+//     cabo
+// cabo
+
+// // --- BUG #7: dependenu com corpo vazio causa erro sintático ---
+// // Esperado: ignorar silenciosamente ou erro semântico limpo
+// // Resultado real: [ERRO SINTÁTICO] esperava 'du_casu', recebi 'cabo'
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     x fica_assim_entao 1 uai
+//     dependenu(x) simbora
+//     cabo
+// cabo
+
+// // --- BUG #9: hex com 'X' maiúsculo não é reconhecido ---
+// // Lexer só aceita "0x" minúsculo. "0X" vira inteiro 0 + identificador "XFF".
+// // Esperado: x = 255
+// // Resultado real: [ERRO SINTÁTICO]
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     x fica_assim_entao 0XFF uai
+//     oia_proce_ve(x) uai
+// cabo
+
+
+// =============================================================================
+// SEÇÃO 7: BUGS DE FLUXO — COMPORTAMENTO ERRADO EM BREAK/CONTINUE
+// =============================================================================
+
+// // --- BUG #13: toca_o_trem dentro de dependenu que está dentro de while ---
+// // dependenu faz pilha_loops.append((L_fim, L_fim)), então toca_o_trem vê
+// // o L_fim do switch como alvo, não o L_inicio do while externo.
+// // Resultado: toca_o_trem sai do switch, mas NÃO continua o while.
+// // Esperado: continuar o laço while (i chegar a 5 e imprimir "fim")
+// // Resultado real: sai do switch e sai do while junto (ou entra em loop infinito)
+// bora_cumpade main() simbora
+//     trem_di_numeru i uai
+//     i fica_assim_entao 0 uai
+//     enquanto_tiver_trem (i < 5)
+//     simbora
+//         dependenu(i) simbora
+//             du_casu 2:
+//                 i fica_assim_entao i + 1 uai
+//                 toca_o_trem uai
+//         cabo
+//         i fica_assim_entao i + 1 uai
+//     cabo
+//     oia_proce_ve("fim") uai
+//     oia_proce_ve(i) uai
+// cabo
+
+// // --- BUG #14: para_o_trem dentro de dependenu apenas sai do switch, não do laço ---
+// // Mesmo motivo do BUG #13: pilha_loops aponta para L_fim do dependenu.
+// // Esperado: para_o_trem quebra o while quando i == 2 (i fica 2, não chega a 5)
+// // Resultado real: sai do switch, o while continua normalmente até i = 5
+// bora_cumpade main() simbora
+//     trem_di_numeru i uai
+//     i fica_assim_entao 0 uai
+//     enquanto_tiver_trem (i < 5)
+//     simbora
+//         dependenu(i) simbora
+//             du_casu 2: para_o_trem uai
+//         cabo
+//         i fica_assim_entao i + 1 uai
+//     cabo
+//     oia_proce_ve(i) uai
+// cabo
+
+
+// =============================================================================
+// SEÇÃO 8: COMPORTAMENTOS SURPREENDENTES (não crasham, mas surpreendem)
+// =============================================================================
+
+// // --- SURPRESA #1: trem_discolhe inicializa como eh (true), não num_eh (false) ---
+// // Em C/Java, bool inicializa como false. No Minerês, o padrão é "eh" (true).
+// // Esperado (intuitivo): num_eh
+// // Resultado real: eh
+// bora_cumpade main() simbora
+//     trem_discolhe b uai
+//     oia_proce_ve(b) uai
+// cabo
+
+// // --- SURPRESA #2: LHS entre parênteses é aceito como atribuição ---
+// // O check de LHS verifica cod_esq == [] e @x na tabela. (x) satisfaz ambos.
+// // Esperado (parser rigoroso): [ERRO SINTÁTICO]
+// // Resultado real: imprime 5 normalmente
+// bora_cumpade main() simbora
+//     trem_di_numeru x uai
+//     (x) fica_assim_entao 5 uai
+//     oia_proce_ve(x) uai
+// cabo
+
+// // --- SURPRESA #3: comparar strings com '<' é semanticamente válido ---
+// // _validar_operacao_relacional aceita mesmo tipo. trem_discrita == trem_discrita → OK.
+// // Na prática faz comparação lexicográfica Python, imprimindo True/False.
+// // Esperado pelo usuário: [ERRO SEMÂNTICO] (strings não são comparáveis com <)
+// // Resultado real: imprime True (comparação lexicográfica funciona, mas printa True)
+// bora_cumpade main() simbora
+//     trem_discrita a, b uai
+//     trem_discolhe r uai
+//     a fica_assim_entao "abelha" uai
+//     b fica_assim_entao "zebra" uai
+//     r fica_assim_entao a < b uai
+//     oia_proce_ve(r) uai
+// cabo
