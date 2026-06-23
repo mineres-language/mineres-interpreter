@@ -4,13 +4,13 @@ class Interpretador:
     def __init__(self, codigo_ir: list):
         self.codigo = codigo_ir
         
-        # A nossa "Memória RAM". Variáveis serão criadas aqui na primeira atribuição.
+        # "Memória RAM". Variáveis serão criadas aqui na primeira atribuição.
         self.variaveis = {} 
         
         # Dicionário de rotas para os desvios de fluxo (Jumps/Ifs)
         self.labels = {}
         
-        # Ponteiro de Instrução (Instruction Pointer)
+        # Ponteiro de Instrução
         self.ip = 0 
 
     def disparar_erro(self, mensagem: str):
@@ -61,8 +61,8 @@ class Interpretador:
         # 1. Prepara as rotas de salto
         self.mapear_labels()
 
-        print("\n" + "="*40)
-        print(" INICIANDO EXECUÇÃO (MÁQUINA VIRTUAL) ")
+        print("" + "="*40)
+        print("           INICIANDO  EXECUÇÃO ")
         print("="*40 + "\n")
 
         # 2. Inicia o ciclo de máquina
@@ -212,5 +212,5 @@ class Interpretador:
                 self.disparar_erro(f"Operação desconhecida pelo interpretador: '{op}'")
 
         print("\n" + "="*40)
-        print(" FIM DA EXECUÇÃO (MÁQUINA VIRTUAL) ")
+        print("             FIM DA EXECUÇÃO ")
         print("="*40 + "\n")

@@ -1,4 +1,3 @@
-# src/main.py
 import os
 import sys
 from lexer.lexer import Lexer, formata_tokens
@@ -33,7 +32,7 @@ def analise_lexica(fonte: str, arquivo_saida: str) -> list:
 def analise_sintatica(tokens: list) -> list:
     parser = Parser(tokens)
     codigo_ir = parser.iniciar()
-    print("  [PARSER] Análise sintática concluída com sucesso!")
+    # print("  [PARSER] Análise sintática concluída com sucesso!")
     return codigo_ir
 
 def gera_ir(codigo_ir: list, arquivo_saida: str):
@@ -44,13 +43,13 @@ def gera_ir(codigo_ir: list, arquivo_saida: str):
     os.makedirs(os.path.dirname(arquivo_saida), exist_ok=True)
     with open(arquivo_saida, "w", encoding="utf-8") as f:
         f.write(formata_codigo(codigo_ir))
-    print(f"  [IR] Sucesso! {len(codigo_ir)} tuplas geradas, salvas em {arquivo_saida}.")
+    # print(f"  [IR] Sucesso! {len(codigo_ir)} tuplas geradas, salvas em {arquivo_saida}.")
 
 def main():
     clear_console()
     print("-"*40)
     print(" "*11 +  "MINERES INTERPRETER")
-    print("-"*40 + "\n")
+    print("-"*40 + "")
     
     # Configuração de caminhos
     arquivo_entrada     = "data/input/entrada.uai"
@@ -84,7 +83,7 @@ def main():
 
     # -----------------------------------
     # Execução (Máquina Virtual)
-    print(" "*10 + "-" * 5 + " INTERPRETADOR " + "-" * 5)
+    # print(" "*10 + "-" * 5 + " INTERPRETADOR " + "-" * 5)
     if codigo_ir:
         vm = Interpretador(codigo_ir)
         vm.executar()
