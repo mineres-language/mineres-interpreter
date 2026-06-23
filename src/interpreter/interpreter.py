@@ -58,7 +58,6 @@ class Interpretador:
             print("Nenhum código intermediário para executar.")
             return
 
-        # 1. Prepara as rotas de salto
         self.mapear_labels()
 
         print("" + "="*40)
