@@ -41,10 +41,11 @@ Armazena `valor` (ou o valor de `@origem`) na variável `@destino` em memória.
 
 ### Entrada / Saída
 ```
-("call", "print", @var, null)      // imprime valor da variável
-("call", "print", null,  "literal") // imprime string literal
-("call", "read",  @dest, null)     // lê do teclado → converte para int/float se possível
+("call", "print", @var,   null)       // imprime valor da variável
+("call", "print", null,   "literal")  // imprime string literal
+("call", "read",  @dest,  tipo_nome)  // lê do teclado e valida o tipo esperado
 ```
+> `tipo_nome` é uma string (`"trem_di_numeru"`, `"trem_cum_virgula"`, etc.). O interpretador converte a entrada para o tipo correto ou dispara `[ERRO INTERPRETADOR]` se a conversão falhar (ex: digitar `"abc"` para `trem_di_numeru`).
 
 ### Operações Aritméticas
 ```
@@ -70,7 +71,7 @@ Armazena `valor` (ou o valor de `@origem`) na variável `@destino` em memória.
 ("xor", @dest, @op1, @op2)    // um_o_oto
 ("not", @dest, @origem, null) // vam_marca
 ```
-Os valores `"eh"` e `"num_eh"` do Minerês são convertidos para `True`/`False` do Python antes da operação.
+Os valores `"eh"` e `"num_eh"` são convertidos para `True`/`False` do Python durante o cálculo, e o resultado é sempre normalizado de volta para `"eh"` ou `"num_eh"` antes de ser armazenado.
 
 ### Operações Relacionais
 ```
@@ -81,7 +82,7 @@ Os valores `"eh"` e `"num_eh"` do Minerês são convertidos para `True`/`False` 
 ("eq",   @dest, @op1, @op2)   // mema_coisa
 ("dif",  @dest, @op1, @op2)   // neh_nada
 ```
-O resultado é um booleano Python (`True`/`False`), compatível com a lógica de salto do `if`.
+O resultado é sempre `"eh"` ou `"num_eh"` (nunca `True`/`False` do Python), compatível com a instrução `if` e com `oia_proce_ve`.
 
 ### Controle de Fluxo
 ```
@@ -118,6 +119,7 @@ Situações que geram erro:
 - Divisão real, inteira ou módulo por zero
 - Tipo incompatível para operação aritmética ou unária (ex: somar strings na VM)
 - Label de salto não encontrado no dicionário de rotas
+- Entrada do teclado incompatível com o tipo declarado no `xove` (ex: digitar `"abc"` para `trem_di_numeru`)
 
 ---
 

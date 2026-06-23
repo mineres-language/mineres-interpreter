@@ -35,8 +35,8 @@ A [gramática do Minerês](../../data/grammar/mineres.gmr) define como as "frase
 <forStmt>   ::= 'roda_esse_trem' '(' [<atrib>] ';' [<atrib>] ';' [<atrib>] ')' <stmt>
 
 <caseStmt>  ::= 'dependenu' '(' IDENT ')' 'simbora'
-                    ('du_casu' <fatorZin> ':' <stmt>)*
-                    ['uai_so' ':' <stmt>]
+                    ('du_casu' <fatorZin> ':' <stmtList_case>)*
+                    ['uai_so' ':' <stmtList_case>]
                 'cabo'
 ```
 
@@ -63,13 +63,17 @@ O Parser rastreia o tipo de cada sub-expressão e aplica regras estritamente:
 | Regra                                       | Comportamento                                                                  |
 |---------------------------------------------|--------------------------------------------------------------------------------|
 | Operadores lógicos (`tamem`, `quarque_um`, `um_o_oto`) | Exigem dois `trem_discolhe`; erro caso contrário              |
-| `vam_marca` (NOT)                           | Exige operando `trem_discolhe`                                                 |
-| Operadores relacionais                      | Aceita dois numéricos (`int`/`float`) ou dois do mesmo tipo; erro caso contrário |
+| `vam_marca` (NOT)                           | Aceita qualquer tipo; sempre devolve `trem_discolhe`                           |
+| Unário `+` / `-`                            | Exige operando numérico (`trem_di_numeru` ou `trem_cum_virgula`); erro caso contrário |
+| Operadores relacionais `==` / `!=`          | Aceita dois numéricos ou dois do mesmo tipo não-numérico                       |
+| Operadores de ordem `<` `<=` `>` `>=`       | Exigem dois tipos numéricos; erro para `trem_discolhe`, `trem_discrita`, etc. |
 | Divisão inteira `/` e módulo `%`            | Exigem dois `trem_di_numeru`; erro se um for float                             |
+| `sob` (divisão real)                        | Sempre devolve `trem_cum_virgula`, mesmo que ambos os operandos sejam `trem_di_numeru` |
 | Soma de chars (`'a' + 'b'`)                 | Resultado do tipo `trem_discrita` (string concatenada)                         |
 | Coerção numérica (`int` + `float`)          | Resultado promovido automaticamente para `trem_cum_virgula`                    |
 | Atribuição com tipos incompatíveis          | Erro semântico, exceto `int → float` que é permitido                          |
 | `para_o_trem` / `toca_o_trem` fora de laço | Erro semântico fatal                                                           |
+| `para_o_trem` / `toca_o_trem` dentro de `dependenu` | Afetam o laço externo (`while`/`for`), não o `dependenu`          |
 
 Exemplo de feedback semântico:
 
@@ -104,7 +108,8 @@ Execução abortada.
 | `parse_ifStmt()`      | Gera IR para condicional `uai_se` / `uai_senao`.                                          |
 | `parse_whileStmt()`   | Gera IR para laço `enquanto_tiver_trem`.                                                  |
 | `parse_forStmt()`     | Gera IR para laço `roda_esse_trem`, com label separado para o incremento (suporte a `toca_o_trem`). |
-| `parse_caseStmt()`    | Gera IR para `dependenu`, transformando cada `du_casu` em teste de igualdade + salto.     |
+| `parse_caseStmt()`    | Gera IR para `dependenu`, transformando cada `du_casu` em teste de igualdade + salto. Não empurra na `pilha_loops`, então `para_o_trem`/`toca_o_trem` internos afetam o laço externo. |
+| `parse_stmtList_case()` | Lista de statements dentro de um caso do `dependenu`; para antes de `du_casu`, `uai_so` ou `cabo`. |
 | `_validar_operacao_matematica()` | Fiscaliza operações aritméticas e retorna o tipo do resultado.              |
 | `_validar_operacao_logica()`     | Garante que operandos lógicos são booleanos.                                |
 | `_validar_operacao_relacional()` | Verifica compatibilidade de tipos em comparações.                           |
