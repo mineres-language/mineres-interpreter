@@ -107,12 +107,9 @@
 
 // =============================================================================
 // SEÇÃO 3: REGRESSÕES DE BUG (BUGS CORRIGIDOS)
-// Estes casos reproduzem bugs que já foram corrigidos.
-// Todos devem FUNCIONAR corretamente — se voltarem a falhar, algo regrediu.
 // =============================================================================
 
-// // --- BUG: Conflito entre variável de usuário 't1' e temporária ---
-// // CORRIGIDO: temporárias agora usam prefixo '@_t' (ex: @_t1), nunca conflitam com usuário.
+// // --- Conflito entre variável de usuário 't1' e temporária ---
 // // Esperado: imprime 10 (valor de t1, não sobrescrito).
 // bora_cumpade main() simbora
 //     trem_di_numeru t1 uai
@@ -126,8 +123,7 @@
 //     oia_proce_ve(t1) uai
 // cabo
 
-// // --- BUG: Operadores lógicos com "eh"/"num_eh" tratados como strings Python ---
-// // CORRIGIDO: o interpretador converte "eh" → True e "num_eh" → False antes da operação.
+// // --- Operadores lógicos com "eh"/"num_eh" tratados como strings Python ---
 // // Esperado: imprime False (eh tamem num_eh = true AND false = false).
 // bora_cumpade main() simbora
 //     trem_discolhe bool_a, bool_b, bool_c uai
@@ -140,8 +136,7 @@
 //     oia_proce_ve(bool_c) uai
 // cabo
 
-// // --- BUG: Ponto e vírgula ';' causava erro sintático ---
-// // CORRIGIDO: ';' é tratado como instrução vazia (DEL_PONTO_VIRGULA), igual ao 'uai'.
+// // --- Ponto e vírgula ';' causava erro sintático ---
 // // Esperado: imprime 10 normalmente.
 // bora_cumpade main() simbora
 //     trem_di_numeru a uai
@@ -150,8 +145,7 @@
 //     oia_proce_ve(a) uai
 // cabo
 
-// // --- BUG: String com aspas internas impressa incorretamente ---
-// // CORRIGIDO: a lógica de remoção de aspas no print opera apenas nas aspas externas do IR.
+// // --- String com aspas internas impressa incorretamente ---
 // // Esperado: imprime  "alou"  (com as aspas literais).
 // bora_cumpade main() simbora
 //     trem_discrita msg uai
@@ -159,16 +153,14 @@
 //     oia_proce_ve(msg) uai
 // cabo
 
-// // --- BUG: String literal começando com '@' interpretada como variável ---
-// // CORRIGIDO: strings literais são sempre envolvidas em aspas no IR (ex: '"@nome"'),
-// // então obter_valor nunca as confunde com referências de variável.
+// // --- String literal começando com '@' interpretada como variável ---
 // // Esperado: imprime  @nome  (texto literal, não o valor da variável nome).
 // bora_cumpade main() simbora
 //     trem_discrita nome uai
 //     nome fica_assim_entao "teste" uai
-//
+
 //     trem_discrita msg uai
 //     msg fica_assim_entao "@nome" uai
-//
+
 //     oia_proce_ve(msg) uai
 // cabo
