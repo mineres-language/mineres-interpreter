@@ -24,7 +24,7 @@ VALOR_INICIAL_PADRAO = {
     PR_TREM_DI_NUMERU:   0,       # int
     PR_TREM_CUM_VIRGULA: 0.0,     # float
     PR_TREM_DISCRITA:    "",      # string
-    PR_TREM_DISCOLHE:    "eh",    # bool (eh = true)
+    PR_TREM_DISCOLHE:    "num_eh", # bool (false, padrão C/Java)
     PR_TROSSO:           "\\0",   # char (caractere nulo)
 }
 

@@ -128,8 +128,8 @@ class Lexer:
         lin    = self.linha
         col    = self.coluna
 
-        # hexadecimal: 0x[0-9A-F]+
-        if self.atual() == '0' and self.proximo() == 'x':
+        # hexadecimal: 0x[0-9A-F]+ ou 0X[0-9A-F]+
+        if self.atual() == '0' and self.proximo() in ('x', 'X'):
             self.avanca()  # 0
             self.avanca()  # x
             # se logo depois do 0x vier lixo

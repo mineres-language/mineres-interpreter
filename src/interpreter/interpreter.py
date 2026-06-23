@@ -102,19 +102,27 @@ class Interpretador:
                     print(valor)
                     
                 elif func == "read":
-                    # ("call", "read", destino, None)
+                    # ("call", "read", destino, tipo_nome)
                     dest = instrucao[2]
+                    tipo_nome = instrucao[3]
                     entrada = input()
-                    
-                    # Tenta converter a entrada do teclado para o tipo numérico correto
-                    try:
-                        if '.' in entrada:
-                            entrada = float(entrada)
-                        else:
+
+                    if tipo_nome == "trem_di_numeru":
+                        try:
                             entrada = int(entrada)
-                    except ValueError:
-                        pass # Se falhar, mantém como string
-                        
+                        except ValueError:
+                            self.disparar_erro(
+                                f"Entrada inválida: '{entrada}' não é um número inteiro (trem_di_numeru)."
+                            )
+                    elif tipo_nome == "trem_cum_virgula":
+                        try:
+                            entrada = float(entrada)
+                        except ValueError:
+                            self.disparar_erro(
+                                f"Entrada inválida: '{entrada}' não é um número real (trem_cum_virgula)."
+                            )
+                    # trem_discrita e trosso: mantém como string
+
                     self.variaveis[dest] = entrada
 
             # ---------------------------------------------------------
@@ -131,9 +139,10 @@ class Interpretador:
                 if op in {"and", "or", "xor"}:
                     b1 = True if v1 == "eh" else (False if v1 == "num_eh" else bool(v1))
                     b2 = True if v2 == "eh" else (False if v2 == "num_eh" else bool(v2))
-                    if op == "and": res = bool(b1 and b2)
-                    elif op == "or":  res = bool(b1 or b2)
-                    elif op == "xor": res = bool(b1 ^ b2)
+                    if op == "and":  raw = b1 and b2
+                    elif op == "or": raw = b1 or b2
+                    else:            raw = b1 ^ b2
+                    res = "eh" if raw else "num_eh"
                 else:
                     try:
                         # Operações Aritméticas
@@ -149,14 +158,14 @@ class Interpretador:
                         elif op == "mod":
                             if v2 == 0: self.disparar_erro("Módulo (resto) por zero.")
                             res = v1 % v2
-                            
-                        # Operações Relacionais
-                        elif op == "less": res = v1 < v2
-                        elif op == "leq":  res = v1 <= v2
-                        elif op == "gret": res = v1 > v2
-                        elif op == "geq":  res = v1 >= v2
-                        elif op == "eq":   res = v1 == v2
-                        elif op == "dif":  res = v1 != v2
+
+                        # Operações Relacionais — sempre produzem "eh" ou "num_eh"
+                        elif op == "less": res = "eh" if v1 < v2  else "num_eh"
+                        elif op == "leq":  res = "eh" if v1 <= v2 else "num_eh"
+                        elif op == "gret": res = "eh" if v1 > v2  else "num_eh"
+                        elif op == "geq":  res = "eh" if v1 >= v2 else "num_eh"
+                        elif op == "eq":   res = "eh" if v1 == v2 else "num_eh"
+                        elif op == "dif":  res = "eh" if v1 != v2 else "num_eh"
                     except TypeError:
                         self.disparar_erro("Erro de tipo em tempo de execução: Tipos incompatíveis para a operação.")
 
@@ -176,11 +185,11 @@ class Interpretador:
                 # Operador Unário Lógico (!): ("not", destino, origem, None)
                 dest = instrucao[1]
                 v = self.obter_valor(instrucao[2])
-                
+
                 if v == "eh": v = True
                 elif v == "num_eh": v = False
-                
-                self.variaveis[dest] = not bool(v)
+
+                self.variaveis[dest] = "eh" if not bool(v) else "num_eh"
 
             # ---------------------------------------------------------
             # CONTROLE DE FLUXO (JUMPS E IF)
