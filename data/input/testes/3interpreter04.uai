@@ -1,0 +1,44 @@
+bora_cumpade main() simbora
+
+    trem_di_numeru linha, coluna;
+
+    // Laço externo: roda a linha de 1 ate 7
+    roda_esse_trem (linha fica_assim_entao 1; linha <= 7; linha fica_assim_entao linha + 1) simbora
+            
+        // Teste do CONTINUE: Se a linha for 4, pula para a proxima iteracao do while
+        uai_se (linha mema_coisa 4) simbora
+            toca_o_trem uai
+        cabo
+
+        // Teste do BREAK: Se a linha for 6, encerra o while e volta para o for externo
+        uai_se (linha mema_coisa 6) simbora
+            para_o_trem uai
+        cabo
+            
+        // Se o interpretador estiver correto, so deve imprimir as linhas 1, 2, 3 e 5
+
+        coluna fica_assim_entao 0 uai
+
+        // Laço interno: incrementa a coluna enquanto for menor que 5
+        enquanto_tiver_trem (coluna < 5) simbora
+
+            coluna fica_assim_entao coluna + 1 uai
+
+            // Teste do CONTINUE: Se a coluna for 2, pula para a proxima iteracao do while
+            uai_se (coluna mema_coisa 2) simbora
+                toca_o_trem uai
+            cabo
+
+            // Teste do BREAK: Se a coluna for 4, encerra o while e volta para o for externo
+            uai_se (coluna mema_coisa 4) simbora
+                para_o_trem uai
+            cabo
+
+            // Se o interpretador estiver correto, so deve imprimir as colunas 1 e 3 de cada linha
+            oia_proce_ve(linha, coluna) uai
+
+        cabo
+
+    cabo
+
+cabo
